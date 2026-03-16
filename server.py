@@ -14,12 +14,12 @@ from map_api import map_bp
 
 app = Flask(__name__, static_folder=None)
 
-DATA_DIR = os.path.dirname(os.path.abspath(__file__))
+PAGES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pages")
 
 
 @app.route("/")
 def index():
-    return send_from_directory(DATA_DIR, "map_mgr.html")
+    return send_from_directory(PAGES_DIR, "map_mgr.html")
 
 
 # Register API blueprints
