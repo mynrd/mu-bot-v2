@@ -18,6 +18,8 @@
     --red-soft: rgba(239,68,68,0.12);
     --green: #22c55e;
     --green-soft: rgba(34,197,94,0.12);
+    --gold: #eab308;
+    --gold-soft: rgba(234,179,8,0.12);
     --radius: 12px;
     --radius-sm: 8px;
   }
@@ -94,6 +96,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
+    margin-bottom: 20px;
   }
   .card-header {
     padding: 20px 24px;
@@ -126,8 +129,6 @@
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
   .btn-primary:disabled { opacity: 0.5; pointer-events: none; }
-  .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: rgba(255,255,255,0.12); }
 
   .empty {
     padding: 60px 20px;
@@ -137,31 +138,35 @@
   .empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3; }
   .empty p { font-size: 0.9rem; }
 
-  .settings-list { padding: 0; }
-
-  .setting-row {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 16px;
-    align-items: center;
-    padding: 14px 24px;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.1s;
+  /* --- Section --- */
+  .section { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
   }
-  .setting-row:last-child { border-bottom: none; }
-  .setting-row:hover { background: rgba(99,102,241,0.04); }
 
-  .setting-key {
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  /* --- Grid layouts --- */
+  .grid { display: grid; gap: 14px; }
+  .grid.two-cols { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 768px) { .grid.two-cols { grid-template-columns: 1fr; } }
+
+  /* --- Form field --- */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
     font-size: 0.8rem;
-    color: var(--text-muted);
     font-weight: 600;
+    color: var(--text-muted);
     letter-spacing: 0.02em;
   }
-
-  .setting-input {
+  .field input[type="text"],
+  .field input[type="number"] {
     width: 100%;
-    padding: 8px 12px;
+    padding: 9px 12px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     background: var(--surface2);
@@ -170,16 +175,170 @@
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     transition: border-color 0.15s;
   }
-  .setting-input:focus {
+  .field input:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
   }
-  .setting-input.changed {
+  .field input.changed {
     border-color: var(--accent);
     background: rgba(99,102,241,0.06);
   }
 
+  /* --- Multi-select for maps --- */
+  .map-select-wrap { position: relative; }
+  .map-select-btn {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 0.85rem;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .map-select-btn:hover { border-color: var(--accent); }
+  .map-select-btn.changed { border-color: var(--accent); background: rgba(99,102,241,0.06); }
+  .map-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(99,102,241,0.15);
+    color: var(--accent-hover);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .map-placeholder { color: var(--text-muted); }
+  .map-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .map-dropdown.open { display: block; }
+  .map-option {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.1s;
+  }
+  .map-option:hover { background: rgba(99,102,241,0.08); }
+  .map-option .check {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .map-option.selected .check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .map-option.selected .check::after {
+    content: '';
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translateY(-1px);
+  }
+  .map-option .map-label { flex: 1; }
+  .map-option .map-code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  /* --- Toggle switch --- */
+  .checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px 16px;
+  }
+  @media (max-width: 768px) { .checks { grid-template-columns: 1fr; } }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+  .toggle-row label {
+    font-size: 0.85rem;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .toggle {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  .toggle .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle .slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    bottom: 2px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+  .toggle input:checked + .slider {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .toggle input:checked + .slider::before {
+    transform: translateX(18px);
+    background: #fff;
+  }
+  .toggle.changed .slider {
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.3);
+  }
+
+  /* --- Toast --- */
   .toast {
     position: fixed;
     bottom: 24px;
@@ -210,22 +369,18 @@
   <div class="select-wrap">
     <select id="fileSelect"><option value="">Select a config file...</option></select>
   </div>
+  <button class="btn btn-primary" id="btnSave" style="display:none;" onclick="saveConfig()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Save Changes
+  </button>
 </div>
 
-<div class="main">
+<div class="main" id="settingsWrap">
   <div class="card">
-    <div class="card-header">
-      <h2 id="cardTitle">Settings</h2>
-      <button class="btn btn-primary" id="btnSave" style="display:none;" onclick="saveConfig()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Save Changes
-      </button>
-    </div>
-    <div id="settingsWrap">
-      <div class="empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        <p>Select a config file to edit its settings</p>
-      </div>
+    <div class="card-header"><h2>Settings</h2></div>
+    <div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <p>Select a config file to edit its settings</p>
     </div>
   </div>
 </div>
@@ -236,6 +391,114 @@
 const API = '';
 let currentFile = null;
 let originalValues = {};
+let form = {};
+
+// --- Known maps for multi-select ---
+const KNOWN_MAPS = [
+  { code: '5.5-01', name: 'Abyssal Ferea - Red Boss' },
+  { code: '6-01',   name: 'Dissimilated Nixies Lake' },
+  { code: '6-02',   name: 'Dissimilated Nixies Lake - All' },
+  { code: '7-01',   name: 'Swamp of Abyss' },
+  { code: '7-02',   name: 'Swamp of Darkness' },
+  { code: '7-03',   name: 'Swamp of Abyss - Golden Boss Set 1' },
+  { code: '7-04',   name: 'Swamp of Abyss - Golden Boss Set 2' },
+  { code: 'FF-01',  name: 'Foggy Forest - Red' },
+  { code: 'K-01',   name: 'Kalima' },
+  { code: 'LOD-01', name: 'Land of Demons - Red' },
+  { code: 'SANC2-01', name: 'Sanctuary VIP 2' },
+  { code: 'SANC3-01', name: 'Sanctuary VIP 3 - Red Boss' },
+  { code: 'SANC5-01', name: 'Sanctuary VIP 5 - 1' },
+  { code: 'SANC5-02', name: 'Sanctuary VIP 5 - 2' },
+  { code: 'SANC5-G-01', name: 'Sanctuary 5' },
+  { code: 'SANC5-G-02', name: 'Sanctuary 5 - Golden Only 2' },
+  { code: 'SB-01',  name: 'Superb Realm 8' },
+  { code: 'SB-02',  name: 'Superb Realm 9' },
+  { code: '8-01',   name: 'Darkshade Canyon' },
+  { code: 'ENDLESS_ABYSS', name: 'Endless Abyss' },
+];
+const knownCodes = new Set(KNOWN_MAPS.map(m => m.code));
+
+// --- Field metadata ---
+const FIELD_META = {
+  PORT:          { label: 'Port',          type: 'number' },
+  IGN:           { label: 'IGN',           type: 'text' },
+  MAP:           { label: 'Map(s)',        type: 'map-select' },
+  CHANNELS:      { label: 'Channels (comma-separated)', type: 'text' },
+  IGNORE_NAME:   { label: 'Ignore Name',  type: 'bool' },
+  USE_TELEPORT:  { label: 'Use Teleport', type: 'bool' },
+  ENGAGE_RED_BOSS:    { label: 'Engage Red Boss',    type: 'bool' },
+  ENGAGE_GOLDEN_BOSS: { label: 'Engage Golden Boss', type: 'bool' },
+  RADIUS_SEARCH:      { label: 'Radius Search',      type: 'number' },
+  THRESHOLD_DMG_RED:  { label: 'Threshold DMG Red',  type: 'number' },
+  SKIP_NAMES:    { label: 'Skip Names (comma-separated)', type: 'text' },
+  DEBUG:         { label: 'Debug',         type: 'bool' },
+  RESTART_AFTER_MINUTES: { label: 'Restart After Minutes', type: 'number' },
+  ON_WALK_MODE_GO_TO_STARTING_POINT: { label: 'Walk Mode: Go to Start', type: 'bool' },
+  RETRY_COUNT_READ_LIFE_FAILS: { label: 'Retry Count (Read Life Fails)', type: 'number' },
+  DETECT_LOW_LIFE:    { label: 'Detect Low Life',    type: 'bool' },
+  TAP_ON_MAP_WHILE_WALKING: { label: 'Tap on Map While Walking', type: 'bool' },
+  IS_BUFFER:     { label: 'Buffer Mode',   type: 'bool' },
+  BUFFER:        { label: 'Buffer',        type: 'text' },
+  BUFFER_MAP:    { label: 'Buffer Map',    type: 'text' },
+  BUFFER_COORDINATE:  { label: 'Buffer Coordinate', type: 'text', placeholder: 'e.g. 857,525' },
+  DEBUFF_BEFORE_BUFF: { label: 'Debuff Before Buff', type: 'bool' },
+  BUFFER_WHITELIST_NAMES:  { label: 'Buffer Whitelist - Names (comma-separated)',  type: 'text' },
+  BUFFER_WHITELIST_GUILDS: { label: 'Buffer Whitelist - Guilds (comma-separated)', type: 'text' },
+  AFK_MODE:      { label: 'AFK Mode',      type: 'bool' },
+  TAP_SKILL_CANCEL_ATTACK_COORDS: { label: 'Skill Cancel Attack Coords', type: 'text', placeholder: 'e.g. 84.0,76.0' },
+};
+
+// --- Sections & conditional logic ---
+const SECTIONS = [
+  {
+    title: 'Mode Selection',
+    show: () => true,
+    fields: ['AFK_MODE', 'IS_BUFFER'],
+    layout: 'checks',
+  },
+  {
+    title: 'Identity / Connection',
+    show: () => true,
+    fields: ['PORT', 'IGN'],
+    layout: 'two-cols',
+  },
+  {
+    title: 'Map Configuration',
+    show: () => !toBool(form.AFK_MODE) && !toBool(form.IS_BUFFER),
+    fields: ['MAP', 'CHANNELS'],
+    layout: 'grid',
+  },
+  {
+    title: 'Combat Settings',
+    show: () => !toBool(form.AFK_MODE) && !toBool(form.IS_BUFFER),
+    fields: ['SKIP_NAMES', 'RADIUS_SEARCH', 'THRESHOLD_DMG_RED', 'RETRY_COUNT_READ_LIFE_FAILS'],
+    layout: 'grid',
+  },
+  {
+    title: 'Feature Toggles',
+    show: () => !toBool(form.AFK_MODE) && !toBool(form.IS_BUFFER),
+    fields: ['IGNORE_NAME', 'USE_TELEPORT', 'ENGAGE_RED_BOSS', 'ENGAGE_GOLDEN_BOSS', 'DEBUG',
+             'ON_WALK_MODE_GO_TO_STARTING_POINT', 'DETECT_LOW_LIFE', 'TAP_ON_MAP_WHILE_WALKING'],
+    layout: 'checks',
+  },
+  {
+    title: 'General Settings',
+    show: () => !toBool(form.AFK_MODE) && !toBool(form.IS_BUFFER),
+    fields: ['RESTART_AFTER_MINUTES', 'TAP_SKILL_CANCEL_ATTACK_COORDS'],
+    layout: 'two-cols',
+  },
+  {
+    title: 'Buffer Settings',
+    show: () => toBool(form.IS_BUFFER) && !toBool(form.AFK_MODE),
+    fields: ['BUFFER', 'BUFFER_MAP', 'BUFFER_COORDINATE', 'DEBUFF_BEFORE_BUFF',
+             'BUFFER_WHITELIST_NAMES', 'BUFFER_WHITELIST_GUILDS'],
+    layout: 'grid',
+  },
+];
+
+function toBool(v) {
+  return String(v).toLowerCase() === 'true';
+}
 
 function toast(msg, isError) {
   const el = document.getElementById('toast');
@@ -251,6 +514,7 @@ function esc(s) {
   return d.innerHTML;
 }
 
+// --- Load files ---
 async function loadFiles() {
   const res = await fetch(`${API}/api/config/files`);
   const files = await res.json();
@@ -270,9 +534,8 @@ document.getElementById('fileSelect').addEventListener('change', e => {
     loadConfig(currentFile);
   } else {
     document.getElementById('settingsWrap').innerHTML =
-      '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><p>Select a config file to edit its settings</p></div>';
+      '<div class="card"><div class="card-header"><h2>Settings</h2></div><div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><p>Select a config file to edit its settings</p></div></div>';
     document.getElementById('btnSave').style.display = 'none';
-    document.getElementById('cardTitle').textContent = 'Settings';
   }
 });
 
@@ -280,48 +543,202 @@ async function loadConfig(filename) {
   const res = await fetch(`${API}/api/config/files/${encodeURIComponent(filename)}`);
   const data = await res.json();
   originalValues = {};
-  data.settings.forEach(s => { originalValues[s.key] = s.value; });
-  renderSettings(data.settings);
+  form = {};
+  data.settings.forEach(s => {
+    originalValues[s.key] = s.value;
+    form[s.key] = s.value;
+  });
+  renderForm();
   document.getElementById('btnSave').style.display = '';
-  document.getElementById('cardTitle').textContent = `Settings \u2014 ${filename}`;
 }
 
-function renderSettings(settings) {
-  if (!settings.length) {
-    document.getElementById('settingsWrap').innerHTML =
-      '<div class="empty"><p>No settings found in this file.</p></div>';
-    return;
+// --- Render the full form ---
+function renderForm() {
+  const wrap = document.getElementById('settingsWrap');
+  let html = '';
+
+  for (const sec of SECTIONS) {
+    if (!sec.show()) continue;
+    // Skip sections where none of the fields exist in the config
+    const hasFields = sec.fields.some(k => k in form);
+    if (!hasFields) continue;
+
+    html += `<div class="card"><div class="card-header"><h2>${sec.title}</h2></div>`;
+
+    if (sec.layout === 'checks') {
+      html += '<div class="section"><div class="checks">';
+      for (const key of sec.fields) {
+        if (!(key in form)) continue;
+        const meta = FIELD_META[key] || { label: key, type: 'text' };
+        const checked = toBool(form[key]);
+        const changed = form[key] !== originalValues[key];
+        html += `<div class="toggle-row">
+          <div class="toggle ${changed ? 'changed' : ''}">
+            <input type="checkbox" id="f_${key}" data-key="${key}" ${checked ? 'checked' : ''} onchange="onToggle(this)">
+            <span class="slider"></span>
+          </div>
+          <label for="f_${key}">${esc(meta.label)}</label>
+        </div>`;
+      }
+      html += '</div></div>';
+    } else {
+      const gridClass = sec.layout === 'two-cols' ? 'grid two-cols' : 'grid';
+      html += `<div class="section"><div class="${gridClass}">`;
+      for (const key of sec.fields) {
+        if (!(key in form)) continue;
+        const meta = FIELD_META[key] || { label: key, type: 'text' };
+
+        if (meta.type === 'bool') {
+          const checked = toBool(form[key]);
+          const changed = form[key] !== originalValues[key];
+          html += `<div class="field"><label>${esc(meta.label)}</label>
+            <div class="toggle-row">
+              <div class="toggle ${changed ? 'changed' : ''}">
+                <input type="checkbox" id="f_${key}" data-key="${key}" ${checked ? 'checked' : ''} onchange="onToggle(this)">
+                <span class="slider"></span>
+              </div>
+            </div>
+          </div>`;
+        } else if (meta.type === 'map-select') {
+          html += renderMapSelect(key, meta);
+        } else {
+          const inputType = meta.type === 'number' ? 'number' : 'text';
+          const changed = form[key] !== originalValues[key];
+          const ph = meta.placeholder ? ` placeholder="${esc(meta.placeholder)}"` : '';
+          html += `<div class="field">
+            <label>${esc(meta.label)}</label>
+            <input type="${inputType}" id="f_${key}" data-key="${key}" value="${esc(form[key])}" class="${changed ? 'changed' : ''}" oninput="onInput(this)"${ph}>
+          </div>`;
+        }
+      }
+      html += '</div></div>';
+    }
+    html += '</div>';
   }
 
-  let html = '<div class="settings-list">';
-  settings.forEach(s => {
-    html += `<div class="setting-row">
-      <div class="setting-key">${esc(s.key)}</div>
-      <input class="setting-input" data-key="${esc(s.key)}" value="${esc(s.value)}" oninput="markChanged(this)">
+  // Any unknown keys that aren't in SECTIONS
+  const allSectionKeys = new Set(SECTIONS.flatMap(s => s.fields));
+  const unknownKeys = Object.keys(form).filter(k => !allSectionKeys.has(k));
+  if (unknownKeys.length) {
+    html += '<div class="card"><div class="card-header"><h2>Other Settings</h2></div><div class="section"><div class="grid">';
+    for (const key of unknownKeys) {
+      const changed = form[key] !== originalValues[key];
+      html += `<div class="field">
+        <label>${esc(key)}</label>
+        <input type="text" data-key="${key}" value="${esc(form[key])}" class="${changed ? 'changed' : ''}" oninput="onInput(this)">
+      </div>`;
+    }
+    html += '</div></div></div>';
+  }
+
+  wrap.innerHTML = html;
+}
+
+// --- Map multi-select ---
+function renderMapSelect(key, meta) {
+  const selected = form[key] ? form[key].split(',').map(s => s.trim()).filter(Boolean) : [];
+  const changed = form[key] !== originalValues[key];
+
+  let tagsHtml = '';
+  if (selected.length) {
+    selected.forEach(code => {
+      const m = KNOWN_MAPS.find(km => km.code === code);
+      tagsHtml += `<span class="map-tag">${esc(m ? m.name : code)} (${esc(code)})</span>`;
+    });
+  } else {
+    tagsHtml = '<span class="map-placeholder">Select maps...</span>';
+  }
+
+  let optionsHtml = '';
+  KNOWN_MAPS.forEach(m => {
+    const sel = selected.includes(m.code);
+    optionsHtml += `<div class="map-option ${sel ? 'selected' : ''}" data-code="${esc(m.code)}" onclick="toggleMapOption(this)">
+      <div class="check"></div>
+      <span class="map-label">${esc(m.name)}</span>
+      <span class="map-code">${esc(m.code)}</span>
     </div>`;
   });
-  html += '</div>';
-  document.getElementById('settingsWrap').innerHTML = html;
+
+  return `<div class="field">
+    <label>${esc(meta.label)}</label>
+    <div class="map-select-wrap" id="mapSelectWrap">
+      <div class="map-select-btn ${changed ? 'changed' : ''}" onclick="toggleMapDropdown()">${tagsHtml}</div>
+      <div class="map-dropdown" id="mapDropdown">${optionsHtml}</div>
+    </div>
+  </div>`;
 }
 
-function markChanged(input) {
-  const key = input.dataset.key;
-  if (input.value !== originalValues[key]) {
-    input.classList.add('changed');
+function toggleMapDropdown() {
+  const dd = document.getElementById('mapDropdown');
+  dd.classList.toggle('open');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('mapSelectWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    const dd = document.getElementById('mapDropdown');
+    if (dd) dd.classList.remove('open');
+  }
+});
+
+function toggleMapOption(el) {
+  const code = el.dataset.code;
+  let selected = form.MAP ? form.MAP.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+  // Preserve unknown codes
+  const unknownCodes = selected.filter(c => !knownCodes.has(c));
+
+  if (selected.includes(code)) {
+    selected = selected.filter(c => c !== code);
   } else {
-    input.classList.remove('changed');
+    selected.push(code);
+  }
+
+  // Ensure unknown codes stay
+  unknownCodes.forEach(uc => {
+    if (!selected.includes(uc)) selected.push(uc);
+  });
+
+  form.MAP = selected.join(',');
+  renderForm();
+}
+
+// --- Input handlers ---
+function onInput(el) {
+  const key = el.dataset.key;
+  form[key] = el.value;
+  if (el.value !== originalValues[key]) {
+    el.classList.add('changed');
+  } else {
+    el.classList.remove('changed');
   }
 }
 
+function onToggle(el) {
+  const key = el.dataset.key;
+  const val = el.checked ? 'true' : 'false';
+  form[key] = val;
+
+  // Mutual exclusivity: AFK_MODE and IS_BUFFER
+  if (key === 'AFK_MODE' && el.checked && 'IS_BUFFER' in form) {
+    form.IS_BUFFER = 'false';
+  }
+  if (key === 'IS_BUFFER' && el.checked && 'AFK_MODE' in form) {
+    form.AFK_MODE = 'false';
+  }
+
+  renderForm();
+}
+
+// --- Save ---
 async function saveConfig() {
-  const inputs = document.querySelectorAll('.setting-input');
   const updates = {};
-  inputs.forEach(inp => {
-    const key = inp.dataset.key;
-    if (inp.value !== originalValues[key]) {
-      updates[key] = inp.value;
+  for (const key of Object.keys(form)) {
+    if (form[key] !== originalValues[key]) {
+      updates[key] = form[key];
     }
-  });
+  }
 
   if (Object.keys(updates).length === 0) {
     toast('No changes to save');
@@ -340,9 +757,8 @@ async function saveConfig() {
     return;
   }
 
-  // Update original values to reflect saved state
   Object.assign(originalValues, updates);
-  inputs.forEach(inp => inp.classList.remove('changed'));
+  renderForm();
   toast('Config saved');
 }
 
