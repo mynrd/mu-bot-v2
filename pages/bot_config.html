@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bot Config Editor</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --surface: #131825;
+    --surface2: #1a2035;
+    --border: rgba(255,255,255,0.06);
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --red: #ef4444;
+    --red-soft: rgba(239,68,68,0.12);
+    --green: #22c55e;
+    --green-soft: rgba(34,197,94,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .topbar .sep { width: 1px; height: 24px; background: var(--border); }
+  .topbar a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .topbar a:hover { color: var(--text); }
+
+  .select-wrap { position: relative; }
+  .select-wrap select {
+    appearance: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 40px 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    min-width: 320px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .select-wrap select:hover { border-color: var(--accent); }
+  .select-wrap select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  .select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .main { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+  .btn-primary:disabled { opacity: 0.5; pointer-events: none; }
+  .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: rgba(255,255,255,0.12); }
+
+  .empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+  }
+  .empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3; }
+  .empty p { font-size: 0.9rem; }
+
+  .settings-list { padding: 0; }
+
+  .setting-row {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-row:hover { background: rgba(99,102,241,0.04); }
+
+  .setting-key {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .setting-input {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 0.875rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    transition: border-color 0.15s;
+  }
+  .setting-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+  .setting-input.changed {
+    border-color: var(--accent);
+    background: rgba(99,102,241,0.06);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s;
+    z-index: 300;
+    pointer-events: none;
+  }
+  .toast.error { background: var(--red); }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Bot Config Editor</h1>
+  <div class="sep"></div>
+  <a href="/">Map Manager</a>
+  <div class="sep"></div>
+  <div class="select-wrap">
+    <select id="fileSelect"><option value="">Select a config file...</option></select>
+  </div>
+</div>
+
+<div class="main">
+  <div class="card">
+    <div class="card-header">
+      <h2 id="cardTitle">Settings</h2>
+      <button class="btn btn-primary" id="btnSave" style="display:none;" onclick="saveConfig()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Changes
+      </button>
+    </div>
+    <div id="settingsWrap">
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <p>Select a config file to edit its settings</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+let currentFile = null;
+let originalValues = {};
+
+function toast(msg, isError) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (isError ? ' error' : '');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+async function loadFiles() {
+  const res = await fetch(`${API}/api/config/files`);
+  const files = await res.json();
+  const sel = document.getElementById('fileSelect');
+  sel.innerHTML = '<option value="">Select a config file...</option>';
+  files.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f;
+    opt.textContent = f;
+    sel.appendChild(opt);
+  });
+}
+
+document.getElementById('fileSelect').addEventListener('change', e => {
+  currentFile = e.target.value || null;
+  if (currentFile) {
+    loadConfig(currentFile);
+  } else {
+    document.getElementById('settingsWrap').innerHTML =
+      '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><p>Select a config file to edit its settings</p></div>';
+    document.getElementById('btnSave').style.display = 'none';
+    document.getElementById('cardTitle').textContent = 'Settings';
+  }
+});
+
+async function loadConfig(filename) {
+  const res = await fetch(`${API}/api/config/files/${encodeURIComponent(filename)}`);
+  const data = await res.json();
+  originalValues = {};
+  data.settings.forEach(s => { originalValues[s.key] = s.value; });
+  renderSettings(data.settings);
+  document.getElementById('btnSave').style.display = '';
+  document.getElementById('cardTitle').textContent = `Settings \u2014 ${filename}`;
+}
+
+function renderSettings(settings) {
+  if (!settings.length) {
+    document.getElementById('settingsWrap').innerHTML =
+      '<div class="empty"><p>No settings found in this file.</p></div>';
+    return;
+  }
+
+  let html = '<div class="settings-list">';
+  settings.forEach(s => {
+    html += `<div class="setting-row">
+      <div class="setting-key">${esc(s.key)}</div>
+      <input class="setting-input" data-key="${esc(s.key)}" value="${esc(s.value)}" oninput="markChanged(this)">
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('settingsWrap').innerHTML = html;
+}
+
+function markChanged(input) {
+  const key = input.dataset.key;
+  if (input.value !== originalValues[key]) {
+    input.classList.add('changed');
+  } else {
+    input.classList.remove('changed');
+  }
+}
+
+async function saveConfig() {
+  const inputs = document.querySelectorAll('.setting-input');
+  const updates = {};
+  inputs.forEach(inp => {
+    const key = inp.dataset.key;
+    if (inp.value !== originalValues[key]) {
+      updates[key] = inp.value;
+    }
+  });
+
+  if (Object.keys(updates).length === 0) {
+    toast('No changes to save');
+    return;
+  }
+
+  const res = await fetch(`${API}/api/config/files/${encodeURIComponent(currentFile)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ settings: updates }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    toast(err.error || 'Failed to save', true);
+    return;
+  }
+
+  // Update original values to reflect saved state
+  Object.assign(originalValues, updates);
+  inputs.forEach(inp => inp.classList.remove('changed'));
+  toast('Config saved');
+}
+
+loadFiles();
+</script>
+</body>
+</html>
