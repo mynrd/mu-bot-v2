@@ -42,6 +42,7 @@ from adb_helpers._device import (
     ensure_connected,
     ensure_device_connected,
     open_app,
+    set_show_touches,
 )
 
 # -- action command processing --
@@ -49,6 +50,9 @@ from adb_helpers._actions import (
     _process_action_lines,
     process_action_command,
 )
+
+# -- image search --
+import image_search_pattern
 
 # -- game-specific operations --
 from adb_helpers._game import (

@@ -5,7 +5,21 @@ import time
 
 from util import console_log_with_ign
 
-from adb_helpers._core import retry_on_timeout, run_cmd
+from adb_helpers._core import retry_on_timeout, run_adb_cmd, run_cmd
+
+
+def set_show_touches(device: str, enabled: bool = True, ign: str = "player") -> None:
+    """Enable or disable the 'Show taps' overlay on the device screen.
+
+    Maps to: adb shell settings put system show_touches {1|0}
+    """
+    value = "1" if enabled else "0"
+    args = ["shell", "settings", "put", "system", "show_touches", value]
+    code, out, err = run_adb_cmd(device, args)
+    if code != 0:
+        console_log_with_ign(ign, f"Failed to set show_touches to {value}: {err or out}")
+    else:
+        console_log_with_ign(ign, f"show_touches set to {value}")
 
 
 def disconnect(device: str, dry_run: bool = False, ign: str = "player") -> bool:

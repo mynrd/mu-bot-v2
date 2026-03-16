@@ -35,6 +35,7 @@ class BotSettings:
     BUFFER_WHITELIST_GUILDS: list[str] = field(default_factory=list)
     TAP_SKILL_CANCEL_ATTACK_COORDS: Tuple[float, float] = None
     DAWN_MODE: bool = False
+    ADB_SHOW_TAP: bool = False
 
     @staticmethod
     def _to_bool(val: str | bool) -> bool:
@@ -75,4 +76,5 @@ class BotSettings:
             BUFFER_WHITELIST_GUILDS=[s.strip() for s in config.get("BUFFER_WHITELIST_GUILDS", "").split(",") if s.strip()],
             TAP_SKILL_CANCEL_ATTACK_COORDS=tuple(map(float, config.get("TAP_SKILL_CANCEL_ATTACK_COORDS", "").split(","))) if config.get("TAP_SKILL_CANCEL_ATTACK_COORDS") else (prev.TAP_SKILL_CANCEL_ATTACK_COORDS if prev else None),
             DAWN_MODE=cls._to_bool(config.get("DAWN_MODE", prev.DAWN_MODE if prev else False)),
+            ADB_SHOW_TAP=cls._to_bool(config.get("ADB_SHOW_TAP", prev.ADB_SHOW_TAP if prev else False)),
         )

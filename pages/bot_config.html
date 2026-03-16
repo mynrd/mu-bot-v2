@@ -95,7 +95,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    overflow: hidden;
+    overflow: visible;
     margin-bottom: 20px;
   }
   .card-header {
@@ -429,7 +429,7 @@ const FIELD_META = {
   ENGAGE_RED_BOSS:    { label: 'Engage Red Boss',    type: 'bool' },
   ENGAGE_GOLDEN_BOSS: { label: 'Engage Golden Boss', type: 'bool' },
   RADIUS_SEARCH:      { label: 'Radius Search',      type: 'number' },
-  THRESHOLD_DMG_RED:  { label: 'Threshold DMG Red',  type: 'number' },
+  THRESHOLD_DMG_RED:  { label: 'Threshold DMG Red (Buff)',  type: 'number' },
   SKIP_NAMES:    { label: 'Skip Names (comma-separated)', type: 'text' },
   DEBUG:         { label: 'Debug',         type: 'bool' },
   RESTART_AFTER_MINUTES: { label: 'Restart After Minutes', type: 'number' },
@@ -446,6 +446,7 @@ const FIELD_META = {
   BUFFER_WHITELIST_GUILDS: { label: 'Buffer Whitelist - Guilds (comma-separated)', type: 'text' },
   AFK_MODE:      { label: 'AFK Mode',      type: 'bool' },
   TAP_SKILL_CANCEL_ATTACK_COORDS: { label: 'Skill Cancel Attack Coords', type: 'text', placeholder: 'e.g. 84.0,76.0' },
+  ADB_SHOW_TAP: { label: 'ADB Show Tap', type: 'bool' },
 };
 
 // --- Sections & conditional logic ---
@@ -484,7 +485,7 @@ const SECTIONS = [
   {
     title: 'General Settings',
     show: () => !toBool(form.AFK_MODE) && !toBool(form.IS_BUFFER),
-    fields: ['RESTART_AFTER_MINUTES', 'TAP_SKILL_CANCEL_ATTACK_COORDS'],
+    fields: ['RESTART_AFTER_MINUTES', 'TAP_SKILL_CANCEL_ATTACK_COORDS', 'ADB_SHOW_TAP'],
     layout: 'two-cols',
   },
   {

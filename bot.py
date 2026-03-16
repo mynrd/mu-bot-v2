@@ -38,16 +38,21 @@ def parse_args(argv=None):
 
     if argv is None and len(sys.argv) <= 1:
         config = state.load_bot_config()
+        bool_args = {"ignore-name", "use-teleport", "engage-red-boss", "skip-buffer",
+                      "engage-golden-boss", "debug", "wait-buffer", "reopen",
+                      "check-git-updates", "afk-mode"}
+        value_args = {"port", "ign", "skip-names", "channel", "map", "vip-map",
+                       "radius-search", "bot-id", "restart-after-minutes"}
         fake_argv = []
         for k, v in config.items():
             k_cli = k.lower().replace("_", "-")
-            if k_cli in ["ignore-name", "use-teleport", "engage-boss-only"]:
-                if v.lower() in ("1", "true", "yes", "on"):
+            if k_cli in bool_args:
+                if str(v).lower() in ("1", "true", "yes", "on"):
                     fake_argv.append(f"--{k_cli}")
-            else:
-                if v != "":
+            elif k_cli in value_args:
+                if str(v) != "":
                     fake_argv.append(f"--{k_cli}")
-                    fake_argv.append(v)
+                    fake_argv.append(str(v))
         return parser.parse_args(fake_argv)
     return parser.parse_args(argv)
 
@@ -161,11 +166,18 @@ def main(args) -> int:
     if state.PORT is None or state.PORT == "":
         state.PORT = state.BOT_CONFIG.PORT
 
-    state.DEVICE = "127.0.0.1:" + state.PORT
+    try:
+        int(state.PORT)
+        state.DEVICE = "127.0.0.1:" + state.PORT
+    except ValueError:
+        state.DEVICE = state.PORT
     state.console_log(f"Using DEVICE: {state.DEVICE}")
 
     adb_helpers.disconnect(state.DEVICE)
     adb_helpers.ensure_connected(state.DEVICE)
+
+    # Enable/disable show_touches overlay based on config
+    adb_helpers.set_show_touches(state.DEVICE, enabled=state.BOT_CONFIG.ADB_SHOW_TAP, ign=state.BOT_CONFIG.IGN)
 
     print("----------------------Configuration----------------------")
     console_log_with_ign(state.BOT_CONFIG.IGN, f"Configuration Text Content:\n{state.BOT_CONFIG.configurationTextContent}")
