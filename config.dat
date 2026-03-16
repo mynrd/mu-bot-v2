@@ -1,0 +1,6 @@
+IGN: yawa
+ADB_PATH: adb
+ADB_DEVICE: 127.0.0.1:16384
+ACTIONS1: debuff, buff-barbie, bh-swamp-of-abyss, SCREENSHOT, BOSSHUNT-SWAMP-OF-ABYSS
+ACTIONS: BOSSHUNT-SWAMP-OF-ABYSS
+SKIP_ATTACK_IF_FOUND_NAMES: rein,reinx,thor,thorjack,renn,baludoy,mynrd

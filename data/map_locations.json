@@ -1,0 +1,305 @@
+[
+  {
+    "id": 1,
+    "mapId": "7-01",
+    "name": "Swamp of Abyss",
+    "totalChannel": 5,
+    "bosses": [
+      { "id": 1, "name": "Swamp of Abyss - Red - 01", "coordX": 937, "coordY": 458, "bossType": 1, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 2, "name": "Swamp of Abyss - Red - 02", "coordX": 1191, "coordY": 514, "bossType": 1, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 3, "name": "Swamp of Abyss - Red - 03", "coordX": 1338, "coordY": 670, "bossType": 1, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 4, "name": "Swamp of Abyss - Red - 04", "coordX": 962, "coordY": 728, "bossType": 1, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 5, "name": "Swamp of Abyss - Golden - 01", "coordX": 1188, "coordY": 343, "bossType": 2, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 6, "name": "Swamp of Abyss - Golden - 02", "coordX": 987, "coordY": 394, "bossType": 2, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 7, "name": "Swamp of Abyss - Golden - 03", "coordX": 1138, "coordY": 455, "bossType": 2, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 8, "name": "Swamp of Abyss - Golden - 04", "coordX": 1369, "coordY": 507, "bossType": 2, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 9, "name": "Swamp of Abyss - Golden - 05", "coordX": 804, "coordY": 582, "bossType": 2, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 10, "name": "Swamp of Abyss - Golden - 06", "coordX": 975, "coordY": 609, "bossType": 2, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 11, "name": "Swamp of Abyss - Golden - 07", "coordX": 1049, "coordY": 804, "bossType": 2, "durationToRevive": 2400, "mapId": "7-01" },
+      { "id": 12, "name": "Swamp of Abyss - Golden - 08", "coordX": 1197, "coordY": 795, "bossType": 2, "durationToRevive": 2400, "mapId": "7-01" }
+    ]
+  },
+  {
+    "id": 2,
+    "mapId": "6-01",
+    "name": "Dissimilated Nixies Lake",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 158, "name": "Dissimilated Nixies Lake - 01", "coordX": 1181, "coordY": 853, "bossType": 1, "durationToRevive": 0, "mapId": "6-01" },
+      { "id": 159, "name": "Dissimilated Nixies Lake - 02", "coordX": 927, "coordY": 477, "bossType": 1, "durationToRevive": 0, "mapId": "6-01" },
+      { "id": 160, "name": "Dissimilated Nixies Lake - 03", "coordX": 1151, "coordY": 242, "bossType": 1, "durationToRevive": 0, "mapId": "6-01" },
+      { "id": 161, "name": "Dissimilated Nixies Lake - 04", "coordX": 1381, "coordY": 539, "bossType": 1, "durationToRevive": 0, "mapId": "6-01" }
+    ]
+  },
+  {
+    "id": 3,
+    "mapId": "7-02",
+    "name": "Swamp of Darkness",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 24, "name": "Swamp of Darkness - Red - 01", "coordX": 929, "coordY": 458, "bossType": 1, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 25, "name": "Swamp of Darkness - Red - 02", "coordX": 1003, "coordY": 760, "bossType": 1, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 26, "name": "Swamp of Darkness - Golden - 01", "coordX": 1151, "coordY": 305, "bossType": 2, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 27, "name": "Swamp of Darkness - Golden - 02", "coordX": 1066, "coordY": 398, "bossType": 2, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 28, "name": "Swamp of Darkness - Golden - 03", "coordX": 1266, "coordY": 425, "bossType": 2, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 29, "name": "Swamp of Darkness - Golden - 04", "coordX": 1368, "coordY": 507, "bossType": 2, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 30, "name": "Swamp of Darkness - Golden - 05", "coordX": 804, "coordY": 583, "bossType": 2, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 31, "name": "Swamp of Darkness - Golden - 06", "coordX": 971, "coordY": 613, "bossType": 2, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 32, "name": "Swamp of Darkness - Golden - 07", "coordX": 1110, "coordY": 851, "bossType": 2, "durationToRevive": 2400, "mapId": "7-02" },
+      { "id": 33, "name": "Swamp of Darkness - Golden - 08", "coordX": 1306, "coordY": 707, "bossType": 2, "durationToRevive": 2400, "mapId": "7-02" }
+    ]
+  },
+  {
+    "id": 4,
+    "mapId": "K-01",
+    "name": "Kalima",
+    "totalChannel": 2,
+    "bosses": [
+      { "id": 34, "name": "Kalima - Red - 01", "coordX": 1149, "coordY": 778, "bossType": 1, "durationToRevive": 2400, "mapId": "K-01" },
+      { "id": 35, "name": "Kalima - Red - 02", "coordX": 1329, "coordY": 511, "bossType": 1, "durationToRevive": 2400, "mapId": "K-01" },
+      { "id": 36, "name": "Kalima - Red - 03", "coordX": 1013, "coordY": 385, "bossType": 1, "durationToRevive": 2400, "mapId": "K-01" }
+    ]
+  },
+  {
+    "id": 5,
+    "mapId": "SANC5-01",
+    "name": "Sanctuary VIP 5 - 1",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 53, "name": "Sanctuary VIP 5 - 1 - Red - 05", "coordX": 1004, "coordY": 347, "bossType": 1, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 54, "name": "Sanctuary VIP 5 - 1 - Golden - 02", "coordX": 1034, "coordY": 257, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 55, "name": "Sanctuary VIP 5 - 1 - Golden - 09", "coordX": 1056, "coordY": 394, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 56, "name": "Sanctuary VIP 5 - 1 - Golden - 10", "coordX": 1087, "coordY": 311, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 57, "name": "Sanctuary VIP 5 - 1 - Golden - 08", "coordX": 1109, "coordY": 447, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 58, "name": "Sanctuary VIP 5 - 1 - Red - 04", "coordX": 1140, "coordY": 370, "bossType": 1, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 59, "name": "Sanctuary VIP 5 - 1 - Red - 03", "coordX": 1162, "coordY": 508, "bossType": 1, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 60, "name": "Sanctuary VIP 5 - 1 - Golden - 07", "coordX": 1193, "coordY": 418, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 61, "name": "Sanctuary VIP 5 - 1 - Golden - 05", "coordX": 1216, "coordY": 553, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 62, "name": "Sanctuary VIP 5 - 1 - Golden - 06", "coordX": 1246, "coordY": 470, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 63, "name": "Sanctuary VIP 5 - 1 - Golden - 04", "coordX": 1268, "coordY": 606, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 64, "name": "Sanctuary VIP 5 - 1 - Red - 02", "coordX": 1299, "coordY": 528, "bossType": 1, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 65, "name": "Sanctuary VIP 5 - 1 - Red - 01", "coordX": 1321, "coordY": 666, "bossType": 1, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 66, "name": "Sanctuary VIP 5 - 1 - Golden - 03", "coordX": 1352, "coordY": 576, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" },
+      { "id": 67, "name": "Sanctuary VIP 5 - 1 - Golden - 01", "coordX": 1405, "coordY": 629, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-01" }
+    ]
+  },
+  {
+    "id": 6,
+    "mapId": "SANC5-02",
+    "name": "Sanctuary VIP 5 - 2",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 68, "name": "Sanctuary VIP 5 - 2 - Golden - 04", "coordX": 1024, "coordY": 692, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-02" },
+      { "id": 69, "name": "Sanctuary VIP 5 - 2 - Red - 03", "coordX": 1056, "coordY": 609, "bossType": 1, "durationToRevive": 2400, "mapId": "SANC5-02" },
+      { "id": 70, "name": "Sanctuary VIP 5 - 2 - Red - 02", "coordX": 1076, "coordY": 749, "bossType": 1, "durationToRevive": 2400, "mapId": "SANC5-02" },
+      { "id": 71, "name": "Sanctuary VIP 5 - 2 - Golden - 03", "coordX": 1110, "coordY": 658, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-02" },
+      { "id": 72, "name": "Sanctuary VIP 5 - 2 - Golden - 01", "coordX": 1130, "coordY": 799, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-02" },
+      { "id": 73, "name": "Sanctuary VIP 5 - 2 - Golden - 02", "coordX": 1160, "coordY": 711, "bossType": 2, "durationToRevive": 2400, "mapId": "SANC5-02" },
+      { "id": 74, "name": "Sanctuary VIP 5 - 2 - Red - 01", "coordX": 1215, "coordY": 768, "bossType": 1, "durationToRevive": 2400, "mapId": "SANC5-02" }
+    ]
+  },
+  {
+    "id": 7,
+    "mapId": "7-03",
+    "name": "Swamp of Abyss - Golden Boss Set 1",
+    "totalChannel": 5,
+    "bosses": [
+      { "id": 76, "name": "Swamp of Abyss - Golden Boss 1", "coordX": 1189, "coordY": 338, "bossType": 2, "durationToRevive": 2400, "mapId": "7-03" },
+      { "id": 77, "name": "Swamp of Abyss - Golden Boss 2", "coordX": 1138, "coordY": 449, "bossType": 2, "durationToRevive": 2400, "mapId": "7-03" }
+    ]
+  },
+  {
+    "id": 8,
+    "mapId": "7-04",
+    "name": "Swamp of Abyss - Golden Boss Set 2",
+    "totalChannel": 5,
+    "bosses": [
+      { "id": 78, "name": "Swamp of Abyss - Golden Boss 1", "coordX": 1050, "coordY": 800, "bossType": 2, "durationToRevive": 0, "mapId": "7-04" },
+      { "id": 79, "name": "Swamp of Abyss - Golden Boss 2", "coordX": 1197, "coordY": 792, "bossType": 2, "durationToRevive": 0, "mapId": "7-04" }
+    ]
+  },
+  {
+    "id": 9,
+    "mapId": "SANC2-01",
+    "name": "Sanctuary VIP 2",
+    "totalChannel": 3,
+    "bosses": [
+      { "id": 80, "name": "Sanctuary VIP 2 - Red - 01", "coordX": 1300, "coordY": 525, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 81, "name": "Sanctuary VIP 2 - Red - 02", "coordX": 1163, "coordY": 504, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 82, "name": "Sanctuary VIP 2 - Red - 03", "coordX": 1140, "coordY": 367, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 83, "name": "Sanctuary VIP 2 - Red - 04", "coordX": 1004, "coordY": 345, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 84, "name": "Sanctuary VIP 2 - Red - 05", "coordX": 1004, "coordY": 452, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 85, "name": "Sanctuary VIP 2 - Red - 06", "coordX": 1220, "coordY": 668, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 86, "name": "Sanctuary VIP 2 - Red - 07", "coordX": 1216, "coordY": 769, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 87, "name": "Sanctuary VIP 2 - Red - 08", "coordX": 1078, "coordY": 748, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 88, "name": "Sanctuary VIP 2 - Red - 09", "coordX": 1057, "coordY": 610, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 89, "name": "Sanctuary VIP 2 - Red - 10", "coordX": 919, "coordY": 590, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 90, "name": "Sanctuary VIP 2 - Red - 11", "coordX": 898, "coordY": 450, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 91, "name": "Sanctuary VIP 2 - Red - 12", "coordX": 1323, "coordY": 660, "bossType": 1, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 92, "name": "Sanctuary VIP 2 - Golden - 01", "coordX": 1405, "coordY": 625, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 93, "name": "Sanctuary VIP 2 - Golden - 02", "coordX": 1353, "coordY": 572, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 94, "name": "Sanctuary VIP 2 - Golden - 03", "coordX": 1246, "coordY": 467, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 95, "name": "Sanctuary VIP 2 - Golden - 04", "coordX": 1268, "coordY": 603, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 96, "name": "Sanctuary VIP 2 - Golden - 05", "coordX": 1216, "coordY": 550, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 97, "name": "Sanctuary VIP 2 - Golden - 06", "coordX": 1193, "coordY": 413, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 98, "name": "Sanctuary VIP 2 - Golden - 07", "coordX": 1108, "coordY": 444, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 99, "name": "Sanctuary VIP 2 - Golden - 08", "coordX": 1056, "coordY": 391, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 100, "name": "Sanctuary VIP 2 - Golden - 09", "coordX": 1087, "coordY": 308, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 101, "name": "Sanctuary VIP 2 - Golden - 10", "coordX": 1034, "coordY": 254, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 102, "name": "Sanctuary VIP 2 - Golden - 11", "coordX": 925, "coordY": 366, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 103, "name": "Sanctuary VIP 2 - Golden - 12", "coordX": 811, "coordY": 478, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 104, "name": "Sanctuary VIP 2 - Golden - 13", "coordX": 865, "coordY": 532, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 105, "name": "Sanctuary VIP 2 - Golden - 14", "coordX": 971, "coordY": 637, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 106, "name": "Sanctuary VIP 2 - Golden - 15", "coordX": 1024, "coordY": 691, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 107, "name": "Sanctuary VIP 2 - Golden - 16", "coordX": 1130, "coordY": 796, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 108, "name": "Sanctuary VIP 2 - Golden - 17", "coordX": 1183, "coordY": 849, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 109, "name": "Sanctuary VIP 2 - Golden - 18", "coordX": 1162, "coordY": 711, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 110, "name": "Sanctuary VIP 2 - Golden - 19", "coordX": 1110, "coordY": 657, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 111, "name": "Sanctuary VIP 2 - Golden - 20", "coordX": 1004, "coordY": 551, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 112, "name": "Sanctuary VIP 2 - Golden - 21", "coordX": 950, "coordY": 499, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 113, "name": "Sanctuary VIP 2 - Golden - 22", "coordX": 994, "coordY": 873, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 114, "name": "Sanctuary VIP 2 - Golden - 23", "coordX": 943, "coordY": 820, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 115, "name": "Sanctuary VIP 2 - Golden - 24", "coordX": 889, "coordY": 766, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 116, "name": "Sanctuary VIP 2 - Golden - 25", "coordX": 835, "coordY": 714, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 117, "name": "Sanctuary VIP 2 - Golden - 26", "coordX": 729, "coordY": 607, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 118, "name": "Sanctuary VIP 2 - Golden - 27", "coordX": 1135, "coordY": 578, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 119, "name": "Sanctuary VIP 2 - Golden - 28", "coordX": 1086, "coordY": 529, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 120, "name": "Sanctuary VIP 2 - Golden - 29", "coordX": 1297, "coordY": 739, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 121, "name": "Sanctuary VIP 2 - Golden - 30", "coordX": 783, "coordY": 661, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" },
+      { "id": 122, "name": "Sanctuary VIP 2 - Golden - 31", "coordX": 817, "coordY": 837, "bossType": 2, "durationToRevive": 0, "mapId": "SANC2-01" }
+    ]
+  },
+  {
+    "id": 10,
+    "mapId": "FF-01",
+    "name": "Foggy Forest - Red",
+    "totalChannel": 5,
+    "bosses": [
+      { "id": 123, "name": "Foggy Forest - Red - 01", "coordX": 1128, "coordY": 844, "bossType": 1, "durationToRevive": 0, "mapId": "FF-01" },
+      { "id": 124, "name": "Foggy Forest - Red - 02", "coordX": 829, "coordY": 492, "bossType": 1, "durationToRevive": 0, "mapId": "FF-01" },
+      { "id": 125, "name": "Foggy Forest - Red - 03", "coordX": 1417, "coordY": 485, "bossType": 1, "durationToRevive": 0, "mapId": "FF-01" },
+      { "id": 126, "name": "Foggy Forest - Red - 04", "coordX": 1113, "coordY": 207, "bossType": 1, "durationToRevive": 0, "mapId": "FF-01" }
+    ]
+  },
+  {
+    "id": 11,
+    "mapId": "LOD-01",
+    "name": "Land of Demons - Red",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 127, "name": "Land of Demons - Red - 01", "coordX": 892, "coordY": 480, "bossType": 1, "durationToRevive": 0, "mapId": "LOD-01" },
+      { "id": 128, "name": "Land of Demons - Red - 02", "coordX": 1115, "coordY": 438, "bossType": 1, "durationToRevive": 0, "mapId": "LOD-01" },
+      { "id": 129, "name": "Land of Demons - Red - 03", "coordX": 1430, "coordY": 654, "bossType": 1, "durationToRevive": 0, "mapId": "LOD-01" },
+      { "id": 130, "name": "Land of Demons - Red - 04", "coordX": 1083, "coordY": 820, "bossType": 1, "durationToRevive": 0, "mapId": "LOD-01" }
+    ]
+  },
+  {
+    "id": 12,
+    "mapId": "SANC5-G-01",
+    "name": "Sanctuary 5 - ",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 131, "name": "Sanctuary - Golden - 01", "coordX": 996, "coordY": 873, "bossType": 2, "durationToRevive": 0, "mapId": "SANC5-G-01" },
+      { "id": 132, "name": "Sanctuary - Golden - 02", "coordX": 943, "coordY": 819, "bossType": 2, "durationToRevive": 0, "mapId": "SANC5-G-01" },
+      { "id": 133, "name": "Sanctuary - Golden - 03", "coordX": 889, "coordY": 768, "bossType": 2, "durationToRevive": 0, "mapId": "SANC5-G-01" },
+      { "id": 134, "name": "Sanctuary - Golden - 04", "coordX": 836, "coordY": 714, "bossType": 2, "durationToRevive": 0, "mapId": "SANC5-G-01" }
+    ]
+  },
+  {
+    "id": 13,
+    "mapId": "SANC5-G-02",
+    "name": "Sanctuary 5 - Golden Only 2",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 135, "name": "Sanctuary VIP 5 - Golden - 01", "coordX": 1023, "coordY": 691, "bossType": 2, "durationToRevive": 0, "mapId": "SANC5-G-02" },
+      { "id": 136, "name": "Sanctuary VIP 5 - Golden - 02", "coordX": 1110, "coordY": 656, "bossType": 2, "durationToRevive": 0, "mapId": "SANC5-G-02" },
+      { "id": 137, "name": "Sanctuary VIP 5 - Golden - 03", "coordX": 1005, "coordY": 549, "bossType": 2, "durationToRevive": 0, "mapId": "SANC5-G-02" },
+      { "id": 138, "name": "Sanctuary VIP 5 - Golden - 04", "coordX": 971, "coordY": 636, "bossType": 2, "durationToRevive": 0, "mapId": "SANC5-G-02" }
+    ]
+  },
+  {
+    "id": 14,
+    "mapId": "5.5-01",
+    "name": "Abyssal Ferea - Red Boss",
+    "totalChannel": 5,
+    "bosses": [
+      { "id": 139, "name": "Abyssal Ferea - Red Boss - 01", "coordX": 1099, "coordY": 687, "bossType": 1, "durationToRevive": 0, "mapId": "5.5-01" },
+      { "id": 140, "name": "Abyssal Ferea - Red Boss - 02", "coordX": 992, "coordY": 429, "bossType": 1, "durationToRevive": 0, "mapId": "5.5-01" },
+      { "id": 141, "name": "Abyssal Ferea - Red Boss - 03", "coordX": 1136, "coordY": 294, "bossType": 1, "durationToRevive": 0, "mapId": "5.5-01" },
+      { "id": 142, "name": "Abyssal Ferea - Red Boss - 04", "coordX": 1284, "coordY": 462, "bossType": 1, "durationToRevive": 0, "mapId": "5.5-01" }
+    ]
+  },
+  {
+    "id": 15,
+    "mapId": "SANC3-01",
+    "name": "Sanctuary VIP 3 - Red Boss",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 143, "name": "Sanctuary VIP 3 - Red Boss - 01", "coordX": 1300, "coordY": 525, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 144, "name": "Sanctuary VIP 3 - Red Boss - 02", "coordX": 1163, "coordY": 504, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 145, "name": "Sanctuary VIP 3 - Red Boss - 03", "coordX": 1140, "coordY": 367, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 146, "name": "Sanctuary VIP 3 - Red Boss - 04", "coordX": 1004, "coordY": 345, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 147, "name": "Sanctuary VIP 3 - Red Boss - 05", "coordX": 1004, "coordY": 452, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 148, "name": "Sanctuary VIP 3 - Red Boss - 06", "coordX": 1220, "coordY": 668, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 149, "name": "Sanctuary VIP 3 - Red Boss - 07", "coordX": 1216, "coordY": 769, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 150, "name": "Sanctuary VIP 3 - Red Boss - 08", "coordX": 1078, "coordY": 748, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 151, "name": "Sanctuary VIP 3 - Red Boss - 09", "coordX": 1057, "coordY": 610, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 152, "name": "Sanctuary VIP 3 - Red Boss - 10", "coordX": 919, "coordY": 590, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 153, "name": "Sanctuary VIP 3 - Red Boss - 11", "coordX": 898, "coordY": 450, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" },
+      { "id": 154, "name": "Sanctuary VIP 3 - Red Boss - 12", "coordX": 1323, "coordY": 660, "bossType": 1, "durationToRevive": 0, "mapId": "SANC3-01" }
+    ]
+  },
+  {
+    "id": 16,
+    "mapId": "SB-01",
+    "name": "Superb Realm",
+    "totalChannel": 1,
+    "bosses": [
+      { "id": 155, "name": "Superb Realm - 01", "coordX": 1123, "coordY": 466, "bossType": 1, "durationToRevive": 0, "mapId": "SB-01" },
+      { "id": 156, "name": "Superb Realm - 02", "coordX": 1014, "coordY": 608, "bossType": 1, "durationToRevive": 0, "mapId": "SB-01" },
+      { "id": 157, "name": "Superb Realm - 03", "coordX": 1237, "coordY": 644, "bossType": 1, "durationToRevive": 0, "mapId": "SB-01" }
+    ]
+  },
+  {
+    "id": 17,
+    "mapId": "6-02",
+    "name": "Dissimilated Nixies Lake - All",
+    "totalChannel": 5,
+    "bosses": [
+      { "id": 13, "name": "Dissimilated Nixies Lake - Red - 01", "coordX": 917, "coordY": 478, "bossType": 1, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 14, "name": "Dissimilated Nixies Lake - Red - 02", "coordX": 1142, "coordY": 244, "bossType": 1, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 15, "name": "Dissimilated Nixies Lake - Red - 03", "coordX": 1369, "coordY": 543, "bossType": 1, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 16, "name": "Dissimilated Nixies Lake - Golden - 01", "coordX": 911, "coordY": 618, "bossType": 2, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 17, "name": "Dissimilated Nixies Lake - Golden - 02", "coordX": 1004, "coordY": 756, "bossType": 2, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 18, "name": "Dissimilated Nixies Lake - Golden - 03", "coordX": 1085, "coordY": 539, "bossType": 2, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 19, "name": "Dissimilated Nixies Lake - Golden - 04", "coordX": 1134, "coordY": 650, "bossType": 2, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 20, "name": "Dissimilated Nixies Lake - Golden - 05", "coordX": 1134, "coordY": 650, "bossType": 2, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 21, "name": "Dissimilated Nixies Lake - Golden - 06", "coordX": 1192, "coordY": 511, "bossType": 2, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 22, "name": "Dissimilated Nixies Lake - Golden - 07", "coordX": 1344, "coordY": 662, "bossType": 2, "durationToRevive": 2400, "mapId": "6-02" },
+      { "id": 23, "name": "Dissimilated Nixies Lake - Golden - 08", "coordX": 1125, "coordY": 380, "bossType": 2, "durationToRevive": 2400, "mapId": "6-02" }
+    ]
+  },
+  {
+    "id": 18,
+    "mapId": "8-01",
+    "name": "Darkshade Canyon",
+    "totalChannel": 4,
+    "bosses": [
+      { "id": 162, "name": "Darkshade Canyon - 01", "coordX": 968, "coordY": 395, "bossType": 1, "durationToRevive": 0, "mapId": "8-01" },
+      { "id": 163, "name": "Darkshade Canyon - 02", "coordX": 1125, "coordY": 470, "bossType": 1, "durationToRevive": 0, "mapId": "8-01" },
+      { "id": 164, "name": "Darkshade Canyon - 03", "coordX": 1146, "coordY": 744, "bossType": 1, "durationToRevive": 0, "mapId": "8-01" },
+      { "id": 165, "name": "Darkshade Canyon - 04", "coordX": 1104, "coordY": 267, "bossType": 1, "durationToRevive": 0, "mapId": "8-01" }
+    ]
+  },
+  {
+    "id": 19,
+    "mapId": "SB-02",
+    "name": "Superb Realm - 800",
+    "totalChannel": 1,
+    "bosses": [
+      { "id": 166, "name": "Superb Realm - 800 - 01", "coordX": 935, "coordY": 540, "bossType": 1, "durationToRevive": 0, "mapId": "SB-02" },
+      { "id": 167, "name": "Superb Realm - 800 - 02", "coordX": 1116, "coordY": 386, "bossType": 1, "durationToRevive": 0, "mapId": "SB-02" },
+      { "id": 168, "name": "Superb Realm - 800 - 03", "coordX": 1285, "coordY": 485, "bossType": 1, "durationToRevive": 0, "mapId": "SB-02" }
+    ]
+  }
+]

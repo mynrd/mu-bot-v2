@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map Manager</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --surface: #131825;
+    --surface2: #1a2035;
+    --border: rgba(255,255,255,0.06);
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --red: #ef4444;
+    --red-soft: rgba(239,68,68,0.12);
+    --gold: #eab308;
+    --gold-soft: rgba(234,179,8,0.12);
+    --green: #22c55e;
+    --green-soft: rgba(34,197,94,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* --- Layout --- */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .topbar .sep { width: 1px; height: 24px; background: var(--border); }
+
+  .main { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+  /* --- Card --- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header h2 { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* --- Select --- */
+  .select-wrap {
+    position: relative;
+  }
+  .select-wrap select {
+    appearance: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 40px 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    min-width: 320px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .select-wrap select:hover { border-color: var(--accent); }
+  .select-wrap select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  .select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  /* --- Table --- */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 14px 20px;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba(99,102,241,0.04); }
+  td.mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.8rem; color: var(--text-muted); }
+
+  /* --- Badges --- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .badge-red { background: var(--red-soft); color: var(--red); }
+  .badge-golden { background: var(--gold-soft); color: var(--gold); }
+  .badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* --- Buttons --- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: rgba(255,255,255,0.12); }
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red-soft);
+  }
+  .btn-danger:hover { background: var(--red-soft); }
+
+  .actions { display: flex; gap: 6px; }
+
+  /* --- Empty state --- */
+  .empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+  }
+  .empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3; }
+  .empty p { font-size: 0.9rem; }
+
+  /* --- Modal --- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.15s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 460px;
+    max-width: 95vw;
+    animation: slideUp 0.2s ease;
+  }
+  .modal h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 0.9rem;
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* --- Toast --- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s;
+    z-index: 300;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Map Manager</h1>
+  <div class="sep"></div>
+  <div class="select-wrap">
+    <select id="mapSelect"><option value="">Select a map...</option></select>
+  </div>
+  <button class="btn btn-primary" onclick="openMapModal()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add Map
+  </button>
+</div>
+
+<div class="main">
+  <div class="card">
+    <div class="card-header">
+      <h2 id="cardTitle">Bosses</h2>
+      <button class="btn btn-primary" id="btnAdd" style="display:none;" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Boss
+      </button>
+    </div>
+    <div id="bossTableWrap">
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <p>Select a map to view its bosses</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Boss Modal -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3 id="modalTitle">Add Boss</h3>
+    <input type="hidden" id="editBossId">
+    <div class="form-group">
+      <label for="fName">Name</label>
+      <input type="text" id="fName" placeholder="e.g. Swamp of Abyss - Red - 05">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fCoordX">Coord X</label>
+        <input type="number" id="fCoordX" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label for="fCoordY">Coord Y</label>
+        <input type="number" id="fCoordY" placeholder="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fBossType">Boss Type</label>
+        <select id="fBossType">
+          <option value="1">Red</option>
+          <option value="2">Golden</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="fDuration">Revive Duration (s)</label>
+        <input type="number" id="fDuration" placeholder="0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBoss()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Map Modal -->
+<div class="modal-overlay" id="mapModal" onclick="if(event.target===this)closeMapModal()">
+  <div class="modal">
+    <h3>Add Map</h3>
+    <div class="form-group">
+      <label for="fMapId">Map ID</label>
+      <input type="text" id="fMapId" placeholder="e.g. 7-03">
+    </div>
+    <div class="form-group">
+      <label for="fMapName">Name</label>
+      <input type="text" id="fMapName" placeholder="e.g. Swamp of Abyss">
+    </div>
+    <div class="form-group">
+      <label for="fTotalChannel">Total Channels</label>
+      <input type="number" id="fTotalChannel" placeholder="1" min="1">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeMapModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMap()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+let currentMapId = null;
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// --- Load maps ---
+async function loadMaps() {
+  const res = await fetch(`${API}/api/maps`);
+  const maps = await res.json();
+  const sel = document.getElementById('mapSelect');
+  sel.innerHTML = '<option value="">Select a map...</option>';
+  maps.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.mapId;
+    opt.textContent = `${m.name}  (${m.mapId})  \u2014  ${m.bossCount} bosses`;
+    sel.appendChild(opt);
+  });
+}
+
+document.getElementById('mapSelect').addEventListener('change', e => {
+  currentMapId = e.target.value || null;
+  if (currentMapId) {
+    loadBosses(currentMapId);
+    document.getElementById('btnAdd').style.display = '';
+    document.getElementById('cardTitle').textContent = `Bosses \u2014 ${e.target.options[e.target.selectedIndex].text.split('(')[0].trim()}`;
+  } else {
+    document.getElementById('bossTableWrap').innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><p>Select a map to view its bosses</p></div>';
+    document.getElementById('btnAdd').style.display = 'none';
+    document.getElementById('cardTitle').textContent = 'Bosses';
+  }
+});
+
+// --- Load bosses ---
+async function loadBosses(mapId) {
+  const res = await fetch(`${API}/api/maps/${mapId}/bosses`);
+  const bosses = await res.json();
+  renderTable(bosses);
+}
+
+function renderTable(bosses) {
+  if (!bosses.length) {
+    document.getElementById('bossTableWrap').innerHTML = '<div class="empty"><p>No bosses yet. Click "Add Boss" to create one.</p></div>';
+    return;
+  }
+  let html = `<table>
+    <thead><tr>
+      <th>ID</th><th>Name</th><th>Coord X</th><th>Coord Y</th><th>Type</th><th>Revive</th><th style="text-align:right">Actions</th>
+    </tr></thead><tbody>`;
+  bosses.forEach(b => {
+    const badge = b.bossType === 2
+      ? '<span class="badge badge-golden">Golden</span>'
+      : '<span class="badge badge-red">Red</span>';
+    html += `<tr>
+      <td class="mono">${b.id}</td>
+      <td>${esc(b.name)}</td>
+      <td class="mono">${b.coordX}</td>
+      <td class="mono">${b.coordY}</td>
+      <td>${badge}</td>
+      <td class="mono">${b.durationToRevive}s</td>
+      <td style="text-align:right">
+        <div class="actions" style="justify-content:flex-end">
+          <button class="btn btn-ghost" onclick='openEdit(${JSON.stringify(b)})'>Edit</button>
+          <button class="btn btn-danger" onclick="deleteBoss(${b.id})">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('bossTableWrap').innerHTML = html;
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// --- Modal ---
+function openModal() {
+  document.getElementById('modalTitle').textContent = 'Add Boss';
+  document.getElementById('editBossId').value = '';
+  document.getElementById('fName').value = '';
+  document.getElementById('fCoordX').value = '';
+  document.getElementById('fCoordY').value = '';
+  document.getElementById('fBossType').value = '1';
+  document.getElementById('fDuration').value = '0';
+  document.getElementById('modal').classList.add('active');
+}
+
+function openEdit(b) {
+  document.getElementById('modalTitle').textContent = 'Edit Boss';
+  document.getElementById('editBossId').value = b.id;
+  document.getElementById('fName').value = b.name;
+  document.getElementById('fCoordX').value = b.coordX;
+  document.getElementById('fCoordY').value = b.coordY;
+  document.getElementById('fBossType').value = b.bossType;
+  document.getElementById('fDuration').value = b.durationToRevive;
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+async function saveBoss() {
+  const bossId = document.getElementById('editBossId').value;
+  const body = {
+    name: document.getElementById('fName').value,
+    coordX: parseInt(document.getElementById('fCoordX').value) || 0,
+    coordY: parseInt(document.getElementById('fCoordY').value) || 0,
+    bossType: parseInt(document.getElementById('fBossType').value),
+    durationToRevive: parseInt(document.getElementById('fDuration').value) || 0,
+  };
+
+  if (bossId) {
+    await fetch(`${API}/api/maps/${currentMapId}/bosses/${bossId}`, {
+      method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
+    });
+    toast('Boss updated');
+  } else {
+    await fetch(`${API}/api/maps/${currentMapId}/bosses`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
+    });
+    toast('Boss created');
+  }
+  closeModal();
+  loadBosses(currentMapId);
+}
+
+async function deleteBoss(bossId) {
+  if (!confirm('Delete this boss?')) return;
+  await fetch(`${API}/api/maps/${currentMapId}/bosses/${bossId}`, { method: 'DELETE' });
+  toast('Boss deleted');
+  loadBosses(currentMapId);
+}
+
+// --- Map Modal ---
+function openMapModal() {
+  document.getElementById('fMapId').value = '';
+  document.getElementById('fMapName').value = '';
+  document.getElementById('fTotalChannel').value = '';
+  document.getElementById('mapModal').classList.add('active');
+}
+
+function closeMapModal() {
+  document.getElementById('mapModal').classList.remove('active');
+}
+
+async function saveMap() {
+  const body = {
+    mapId: document.getElementById('fMapId').value.trim(),
+    name: document.getElementById('fMapName').value.trim(),
+    totalChannel: parseInt(document.getElementById('fTotalChannel').value) || 1,
+  };
+  if (!body.mapId || !body.name) {
+    alert('Map ID and Name are required');
+    return;
+  }
+  const res = await fetch(`${API}/api/maps`, {
+    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    alert(err.error || 'Failed to create map');
+    return;
+  }
+  closeMapModal();
+  toast('Map created');
+  await loadMaps();
+  // Auto-select the new map
+  document.getElementById('mapSelect').value = body.mapId;
+  document.getElementById('mapSelect').dispatchEvent(new Event('change'));
+}
+
+// Init
+loadMaps();
+</script>
+</body>
+</html>
