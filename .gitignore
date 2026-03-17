@@ -29,6 +29,7 @@ Desktop.ini
 
 # Data / config
 data/attack_records.json
+data/bot_state.json
 config/
 
 # Screenshots / temp images
