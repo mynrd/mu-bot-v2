@@ -96,7 +96,7 @@ def grab_raw_rgba(device: str, ign: str = "", debug: bool = False) -> ImageLike:
             if debug:
                 console_log_with_ign(ign, f"[DEBUG] grab_raw_rgba: {w}x{h}, fmt={fmt}, data size={len(data)}, pixels size={len(pixels)}")
                 # save the file
-                temp_path = Path(f"temp/{ign}_screenshot_raw_rgba.png")
+                temp_path = Path(f"temp/{ign}_screenshot_raw_rgba_{time.strftime('%Y%m%d_%H%M%S')}.png")
                 temp_path.parent.mkdir(parents=True, exist_ok=True)
                 img.save(temp_path)
                 console_log_with_ign(ign, f"[DEBUG] grab_raw_rgba: saved screenshot to {temp_path}")

@@ -1,0 +1,60 @@
+[
+  {
+    "name": "combined_hsv",
+    "psm": 7,
+    "scale": 3
+  },
+  {
+    "name": "gray_thresh",
+    "psm": 7,
+    "scale": 3,
+    "thresh": 180
+  },
+  {
+    "name": "saturation",
+    "psm": 7,
+    "scale": 3
+  },
+  {
+    "name": "blue_thresh",
+    "psm": 7,
+    "scale": 3,
+    "thresh": 140
+  },
+  {
+    "name": "clahe",
+    "psm": 7,
+    "scale": 3,
+    "thresh": 180,
+    "clip": 2.0
+  },
+  {
+    "name": "gray_thresh",
+    "psm": 6,
+    "scale": 3,
+    "thresh": 200
+  },
+  {
+    "name": "clahe",
+    "psm": 3,
+    "scale": 3,
+    "thresh": 115,
+    "clip": 2.0
+  },
+  {
+    "name": "cyan_hsv",
+    "psm": 7,
+    "scale": 3
+  },
+  {
+    "name": "yellow_hsv",
+    "psm": 7,
+    "scale": 3
+  },
+  {
+    "name": "gray_thresh",
+    "psm": 6,
+    "scale": 4,
+    "thresh": 210
+  }
+]

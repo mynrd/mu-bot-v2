@@ -30,6 +30,8 @@ Desktop.ini
 # Data / config
 data/attack_records.json
 data/bot_state.json
+data/ocr_scores.json
+data/ocr_scores_data.json
 config/
 
 # Screenshots / temp images

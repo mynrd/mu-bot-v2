@@ -279,6 +279,39 @@ def monitor_until_its_gone(device, ign, interval=2, skipNames: List[str] = [], i
 
 
 # ---------------------------------------------------------------------------
+# Shared helpers
+# ---------------------------------------------------------------------------
+
+def _find_current_location(device: str, ign: str):
+    """Locate the player on the map. Returns the 5-tuple or None."""
+    return player_locator_map.find_location_by_image(
+        adb_helpers.grab_raw_rgba(device, ign=ign),
+        state.IMG_TEMPLATE_CURRENT_LOCATION,
+        (605, 168, 1595, 953),
+        threshold=0.7,
+        debug=state.BOT_CONFIG.DEBUG,
+    )
+
+
+def _escape_invalid_areas(device: str, ign: str, invalid_areas: List[List[Tuple[float, float]]]) -> None:
+    """Teleport away if the player is standing inside any invalid area."""
+    if not invalid_areas:
+        return
+    for areas in invalid_areas:
+        while True:
+            current_location = _find_current_location(device, ign)
+            if current_location is None:
+                break
+            x, y, _s, _a, _sc = current_location
+            if player_locator_map.is_point_in_polygon((x, y), areas):
+                console_log_with_ign(ign, "Current location is in invalid area. Teleporting randomly.")
+                adb_helpers.random_teleport(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
+            else:
+                console_log_with_ign(ign, "Current location is valid. Continuing.")
+                break
+
+
+# ---------------------------------------------------------------------------
 # Boss engagement loop (inner loop shared by teleport and walking flows)
 # ---------------------------------------------------------------------------
 
@@ -286,8 +319,6 @@ def _engage_boss_and_update(
     device: str,
     ign: str,
     target_boss: Tuple[float, float],
-    pattern_current_location: str,
-    loop_count: int,
     map_id: str,
     alive_all_type_bosses: List[Tuple[float, float]],
     debug: bool = False,
@@ -305,13 +336,7 @@ def _engage_boss_and_update(
             return True, True, alive_all_type_bosses
 
         if recalc_location_each_loop or initial_location is None:
-            current_location = player_locator_map.find_location_by_image(
-                adb_helpers.grab_raw_rgba(device, ign=ign),
-                pattern_current_location,
-                (605, 168, 1595, 953),
-                threshold=0.7,
-                debug=state.BOT_CONFIG.DEBUG,
-            )
+            current_location = _find_current_location(device, ign)
             if current_location is None:
                 state.console_log(ign, "Failed to determine current location after teleport. Exiting")
                 return True, None, alive_all_type_bosses
@@ -455,7 +480,6 @@ def start_boss_hunting(device: str, ign: str, map_id: str, debug=False):
     state.console_log(ign, f"Alive bosses: {alive_all_type_boss}")
 
     random_teleport_attempts = 0
-    loop_count = 0
     radius_search = state.BOT_CONFIG.RADIUS_SEARCH
 
     invalid_areas = get_map_invalid_areas(map_id)
@@ -464,8 +488,6 @@ def start_boss_hunting(device: str, ign: str, map_id: str, debug=False):
         if state.should_exit_bot(msg="start_boss_hunting main loop"):
             state.console_log(ign, "Exit detected. Exiting go_to_spot.")
             return True
-
-        loop_count += 1
 
         if state.is_already_25_mins():
             state.console_log(ign, "Exiting boss loop after 25.0 minutes (limit 25 minutes).")
@@ -476,112 +498,16 @@ def start_boss_hunting(device: str, ign: str, map_id: str, debug=False):
             return True
 
         state.console_log(ign, f"Alive Red or Golden Boss: {alive_all_type_boss}")
-        if (state.BOT_CONFIG.USE_TELEPORT == True or state.MAP_INFO.mapId == "K-01") and state.MAP_INFO.mapId.startswith("SB-") != False:
+        use_teleport = (state.BOT_CONFIG.USE_TELEPORT == True or state.MAP_INFO.mapId == "K-01") and state.MAP_INFO.mapId.startswith("SB-") != False
+
+        # -- mode-specific preparation --
+        if use_teleport:
             if random_teleport_attempts != 0 and ((random_teleport_attempts) % 10) == 0:
                 console_log_with_ign(state.BOT_CONFIG.IGN, f"Reached {random_teleport_attempts} consecutive teleport attempts without finding a boss. Refreshing map and screen.")
                 adb_helpers.do_clear_screen(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
                 adb_helpers.do_open_map(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
 
-            count_alive = len(alive_all_type_boss)
-            state.console_log(ign, f"Using teleportation to reach the nearest red boss. Alive bosses count: {count_alive}")
-
-            if invalid_areas is not None and len(invalid_areas) > 0:
-                for areas in invalid_areas:
-                    while True:
-                        current_location = player_locator_map.find_location_by_image(
-                            adb_helpers.grab_raw_rgba(device, ign=ign),
-                            state.IMG_TEMPLATE_CURRENT_LOCATION,
-                            (605, 168, 1595, 953),
-                            threshold=0.7,
-                            debug=state.BOT_CONFIG.DEBUG,
-                        )
-                        if current_location is None:
-                            break
-
-                        x, y, score, angle, scale = current_location
-                        is_invalid_area = player_locator_map.is_point_in_polygon((x, y), areas)
-
-                        if is_invalid_area:
-                            console_log_with_ign(ign, f"Current location is in invalid area. Teleporting randomly.")
-                            adb_helpers.random_teleport(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
-                        else:
-                            console_log_with_ign(ign, "Current location is valid. Continuing.")
-                            break
-
-            current_location = player_locator_map.find_location_by_image(
-                adb_helpers.grab_raw_rgba(device, ign=ign),
-                state.IMG_TEMPLATE_CURRENT_LOCATION,
-                (605, 168, 1595, 953),
-                threshold=0.7,
-                debug=state.BOT_CONFIG.DEBUG,
-            )
-            if current_location is None:
-                state.console_log(ign, "Failed to determine current location after teleport. Exiting")
-                return True
-            x, y, score, angle, scale = current_location
-            state.console_log(ign, f"Current location: x={x}, y={y}, score={score}, ang={angle}, scale={scale} __")
-
-            nearest_boss = get_the_nearest_red_boss(
-                device,
-                ign,
-                (x, y),
-                alive_all_type_boss,
-                radius_search,
-                debug=state.BOT_CONFIG.DEBUG,
-            )
-
-            if nearest_boss is None:
-                state.console_log(
-                    ign,
-                    "random_teleport_attempts: ",
-                    random_teleport_attempts,
-                )
-                if random_teleport_attempts <= 10:
-                    adb_helpers.do_tap(device, (84, 78.6629), ign=ign, debug=state.BOT_CONFIG.DEBUG)
-                    time.sleep(0.05)
-                    adb_helpers.do_tap(device, (84, 78.6629), ign=ign, debug=state.BOT_CONFIG.DEBUG)
-                    time.sleep(0.05)
-                    adb_helpers.random_teleport(device, ign, debug=state.BOT_CONFIG.DEBUG)
-                    time.sleep(0.1)
-                    state.console_log(ign, f"Random teleport attempts: {random_teleport_attempts}")
-                    random_teleport_attempts += 1
-                    time.sleep(0.5)
-                    continue
-                else:
-                    state.console_log(ign, "Failed to teleport, manually going to starting position and walking to boss.")
-                    nearest_boss = get_the_nearest_red_boss(
-                        device,
-                        ign,
-                        (x, y),
-                        alive_all_type_boss,
-                        debug=state.BOT_CONFIG.DEBUG,
-                    )
-                    adb_helpers.do_clear_screen(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
-                    adb_helpers.go_to_starting_position(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
-                    time.sleep(2)
-                    adb_helpers.do_open_map(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
-                    time.sleep(1)
-
-            state.console_log(ign, f"Nearest red boss: {nearest_boss}")
-            adb_helpers.do_tap(
-                device,
-                nearest_boss,
-                ign=ign,
-                remarks="Tap to nearest red boss",
-            )
-
-            should_term, ret_val, alive_all_type_boss = _engage_boss_and_update(
-                device,
-                ign,
-                nearest_boss,
-                state.IMG_TEMPLATE_CURRENT_LOCATION,
-                loop_count,
-                map_id,
-                alive_all_type_boss,
-                debug,
-            )
-            if should_term:
-                return ret_val
+            state.console_log(ign, f"Using teleportation to reach the nearest red boss. Alive bosses count: {len(alive_all_type_boss)}")
         else:
             state.console_log(ign, "Walking to the nearest red boss...")
             if state.BOT_CONFIG.ON_WALK_MODE_GO_TO_STARTING_POINT:
@@ -592,76 +518,86 @@ def start_boss_hunting(device: str, ign: str, map_id: str, debug=False):
             adb_helpers.do_open_map(device, ign=state.BOT_CONFIG.IGN, debug=state.BOT_CONFIG.DEBUG)
             time.sleep(1)
 
-            if invalid_areas is not None and len(invalid_areas) > 0:
-                for areas in invalid_areas:
-                    while True:
-                        current_location = player_locator_map.find_location_by_image(
-                            adb_helpers.grab_raw_rgba(device, ign=ign),
-                            state.IMG_TEMPLATE_CURRENT_LOCATION,
-                            (605, 168, 1595, 953),
-                            threshold=0.7,
-                            debug=state.BOT_CONFIG.DEBUG,
-                        )
-                        if current_location is None:
-                            break
+        # -- shared: escape invalid areas, locate player, find nearest boss --
+        _escape_invalid_areas(device, ign, invalid_areas)
 
-                        x, y, score, angle, scale = current_location
-                        is_invalid_area = player_locator_map.is_point_in_polygon((x, y), areas)
+        if not use_teleport and len(alive_all_type_boss) == 0:
+            state.console_log(ign, f"No alive red bosses found in channel {state.CURRENT_CHANNEL}. Exiting hunt.")
+            return True
 
-                        if is_invalid_area:
-                            console_log_with_ign(ign, f"Current location is in invalid area. Teleporting randomly.")
-                            adb_helpers.random_teleport(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
-                        else:
-                            console_log_with_ign(ign, "Current location is valid. Continuing.")
-                            break
+        current_location = _find_current_location(device, ign)
+        if current_location is None:
+            state.console_log(ign, "Failed to determine current location. Exiting")
+            return True
+        x, y, score, angle, scale = current_location
+        state.console_log(ign, f"Current location: x={x}, y={y}, score={score}, ang={angle}, scale={scale} __")
 
-            img = adb_helpers.grab_raw_rgba(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
+        nearest_boss = get_the_nearest_red_boss(
+            device,
+            ign,
+            (x, y),
+            alive_all_type_boss,
+            radius_search if use_teleport else None,
+            debug=state.BOT_CONFIG.DEBUG,
+        )
 
-            if len(alive_all_type_boss) == 0:
-                state.console_log(ign, f"No alive red bosses found in channel {state.CURRENT_CHANNEL}. Exiting hunt.")
-                return True
-
-            current_location = player_locator_map.find_location_by_image(
-                adb_helpers.grab_raw_rgba(device, ign=ign),
-                state.IMG_TEMPLATE_CURRENT_LOCATION,
-                (605, 168, 1595, 953),
-                threshold=0.7,
-                debug=state.BOT_CONFIG.DEBUG,
-            )
-            if current_location is None:
-                state.console_log(ign, "Failed to determine current location after teleport. Exiting")
-                return True
-            x, y, score, angle, scale = current_location
-            state.console_log(ign, f"Current location: x={x}, y={y}, score={score}, ang={angle}, scale={scale} __")
-
-            nearest_boss = get_the_nearest_red_boss(
-                device,
+        # -- teleport-specific: handle no boss in radius --
+        if use_teleport and nearest_boss is None:
+            state.console_log(
                 ign,
-                (x, y),
-                alive_all_type_boss,
-                debug=state.BOT_CONFIG.DEBUG,
+                "random_teleport_attempts: ",
+                random_teleport_attempts,
             )
-            adb_helpers.do_tap(
-                device,
-                nearest_boss,
-                ign=ign,
-                remarks="Tap to first red boss",
-            )
+            if random_teleport_attempts <= 10:
+                adb_helpers.do_tap(device, (84, 78.6629), ign=ign, debug=state.BOT_CONFIG.DEBUG)
+                time.sleep(0.05)
+                adb_helpers.do_tap(device, (84, 78.6629), ign=ign, debug=state.BOT_CONFIG.DEBUG)
+                time.sleep(0.05)
+                adb_helpers.random_teleport(device, ign, debug=state.BOT_CONFIG.DEBUG)
+                time.sleep(0.1)
+                state.console_log(ign, f"Random teleport attempts: {random_teleport_attempts}")
+                random_teleport_attempts += 1
+                time.sleep(0.5)
+                continue
+            else:
+                state.console_log(ign, "Failed to teleport, manually going to starting position and walking to boss.")
+                nearest_boss = get_the_nearest_red_boss(
+                    device,
+                    ign,
+                    (x, y),
+                    alive_all_type_boss,
+                    debug=state.BOT_CONFIG.DEBUG,
+                )
+                adb_helpers.do_clear_screen(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
+                adb_helpers.go_to_starting_position(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
+                time.sleep(2)
+                adb_helpers.do_open_map(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
+                time.sleep(1)
 
-            should_term, ret_val, alive_all_type_boss = _engage_boss_and_update(
-                device,
-                ign,
-                nearest_boss,
-                state.IMG_TEMPLATE_CURRENT_LOCATION,
-                loop_count,
-                map_id,
-                alive_all_type_boss,
-                debug,
-                recalc_location_each_loop=True,
-                initial_location=current_location,
-            )
-            if should_term:
-                return ret_val
+        # -- shared: tap boss and engage --
+        state.console_log(ign, f"Nearest red boss: {nearest_boss}")
+        adb_helpers.do_tap(
+            device,
+            nearest_boss,
+            ign=ign,
+            remarks="Tap to nearest red boss",
+        )
+
+        engage_kwargs = {}
+        if not use_teleport:
+            engage_kwargs = dict(recalc_location_each_loop=True, initial_location=current_location)
+
+        should_term, ret_val, alive_all_type_boss = _engage_boss_and_update(
+            device,
+            ign,
+            nearest_boss,
+            map_id,
+            alive_all_type_boss,
+            debug,
+            **engage_kwargs,
+        )
+        if should_term:
+            return ret_val
 
         random_teleport_attempts = 0
 

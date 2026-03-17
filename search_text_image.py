@@ -8,8 +8,8 @@ from image_helpers import _to_bgr as helpers_to_bgr
 from image_helpers import ImageLike
 
 
-HSV_S_MAX = 60
-HSV_V_MIN = 185
+HSV_S_MAX = 30
+HSV_V_MIN = 200
 GRAY_THR = 200
 UPSCALE = 2
 INVERT_FOR_OCR = False
@@ -59,6 +59,17 @@ def get_search_text(
         out_path = _save_debug(img, ign, "region", tag="notfound")
         print(f"[DEBUG] Search text '{search}' not found in extracted text '{extracted_text}'. Saved region image to {out_path}")
 
+    return extracted_text
+
+def get_text(
+    img: ImageLike,
+    search: Optional[str] = None,
+    region: Optional[Tuple[int, int, int, int]] = None,
+    ign: Optional[str] = None,
+    show_original: bool = False,
+    debug: bool = False,
+) -> str:
+    extracted_text = ""
     return extracted_text
 
 
