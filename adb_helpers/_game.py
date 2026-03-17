@@ -51,7 +51,7 @@ def reopen_app(device, ign, package_name="com.tszz.gpsea"):
             do_tap(device, (74.3795, 51.8492), ign=ign, remarks="Random click to dismiss popups")
             time.sleep(0.2)
 
-            result = search_text_image.get_search_text(grab_raw_rgba(device, ign), region=(834, 762, 1078, 851), debug=False)
+            result = search_text_image.get_search_text("reopen_app:start_game", grab_raw_rgba(device, ign), region=(834, 762, 1078, 851), debug=False)
             if "start game".lower() in result.lower():
 
                 do_tap(device, (958, 805), ign=ign, remarks="Click Start Game")
@@ -66,7 +66,7 @@ def reopen_app(device, ign, package_name="com.tszz.gpsea"):
                 open_app(device, package_name)
 
         while True:
-            result = search_text_image.get_search_text(grab_raw_rgba(device, ign), region=(823, 952, 1097, 1041), debug=False)
+            result = search_text_image.get_search_text("reopen_app:startgame", grab_raw_rgba(device, ign), region=(823, 952, 1097, 1041), debug=False)
             if "startgame".lower() in result.lower():
                 do_tap(device, (955, 998), ign=ign, remarks="Click StartGame")
                 console_log_with_ign(ign, "Found 'StartGame' text; proceeding.")
@@ -79,7 +79,7 @@ def reopen_app(device, ign, package_name="com.tszz.gpsea"):
                 console_log_with_ign(ign, "Timeout waiting for 'Auto Spot' text; proceeding anyway.")
                 time.sleep(1)
                 break
-            result = search_text_image.get_search_text(grab_raw_rgba(device, ign), region=(251, 222, 445, 279), debug=False)
+            result = search_text_image.get_search_text("reopen_app:auto_spot", grab_raw_rgba(device, ign), region=(251, 222, 445, 279), debug=False)
             if "auto".lower() in result.lower():
                 time.sleep(1)
                 do_tap(device, (1681, 166), ign=ign, remarks="Close AutoPlay")
@@ -165,7 +165,10 @@ def do_check_if_buffed(device, ign, min_dmg_red=0, debug=False):
     time.sleep(1)
 
     while True:
-        res = search_text_image.get_search_text(grab_raw_rgba(device, ign, debug), region=(1478, 104, 1890, 973), debug=False)
+        img_stat = grab_raw_rgba(device, ign, debug)
+        # res = search_text_image.get_search_text("do_check_if_buffed:dmg_reduction",img_stat, region=(1478, 104, 1890, 973), debug=False)
+        res = search_text_image.get_search_text_old(img_stat, region=(1478, 104, 1890, 973), debug=False)
+
         lines = res.splitlines()
 
         value = None
@@ -432,7 +435,7 @@ def recycle_inventory(device, ign, is_free_player=False, bot_id=None, debug=Fals
     from search_text_image import get_search_text
 
     # check if there is notification regarding  to Unbound MU Coins
-    check_text = get_search_text(grab_raw_rgba(device, ign=ign, debug=debug), region=(676, 397, 1254, 551), ign=ign, debug=False)
+    check_text = get_search_text("recycle_inventory:check_dialog", grab_raw_rgba(device, ign=ign, debug=debug), region=(676, 397, 1254, 551), ign=ign, debug=False)
     print(f"Check text for recycle: {check_text}")
     if "purchase" in check_text.lower() or "increased" in check_text.lower() or "recycle" in check_text.lower():
         console_log_with_ign(ign, "Detected notification dialog; tapping to dismiss dialog...")
@@ -562,7 +565,7 @@ def check_ign_exists(device, ign, skip_names: List[str] = [], region=(880, 1, 13
 
     if img is None:
         img = grab_raw_rgba(device, ign=ign, debug=debug)
-    found_text = get_search_text(img, search=ign, region=region, ign=ign, debug=debug)
+    found_text = get_search_text("check_ign_exists", img, search=ign, region=region, ign=ign, debug=debug)
     if debug:
         console_log_with_ign(ign, f"[DEBUG] Detected IGN text: '{found_text}'")
 

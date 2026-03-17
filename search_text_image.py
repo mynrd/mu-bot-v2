@@ -28,8 +28,19 @@ def _save_debug(img, ign: Optional[str], suffix: str, tag: str = "") -> str:
     print(f"[DEBUG] Saved {suffix} image: {fpath}")
     return fpath
 
-
 def get_search_text(
+    source: str,
+    img: ImageLike,
+    search: Optional[str] = None,
+    region: Optional[Tuple[int, int, int, int]] = None,
+    ign: Optional[str] = None,
+    show_original: bool = False,
+    debug: bool = False,
+) -> str:
+    from learning_ocr_search_text import get_text
+    return get_text(source, img, search=search, region=region, ign=ign, show_original=show_original, debug=debug)
+
+def get_search_text_old(
     img: ImageLike,
     search: Optional[str] = None,
     region: Optional[Tuple[int, int, int, int]] = None,
@@ -61,16 +72,6 @@ def get_search_text(
 
     return extracted_text
 
-def get_text(
-    img: ImageLike,
-    search: Optional[str] = None,
-    region: Optional[Tuple[int, int, int, int]] = None,
-    ign: Optional[str] = None,
-    show_original: bool = False,
-    debug: bool = False,
-) -> str:
-    extracted_text = ""
-    return extracted_text
 
 
 def get_search_text_blue(

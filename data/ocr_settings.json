@@ -56,5 +56,17 @@
     "psm": 6,
     "scale": 4,
     "thresh": 210
+  },
+  {
+    "name": "gray_thresh",
+    "psm": 6,
+    "scale": 2,
+    "thresh": 180
+  },
+  {
+    "name": "gray_thresh",
+    "psm": 6,
+    "scale": 1,
+    "thresh": 180
   }
 ]

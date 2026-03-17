@@ -127,7 +127,7 @@ def startBuffing(device_id: str, bot_config: BotSettings):
 
     adb_helpers.do_tap_attack(DEVICE_ID, bot_config.IGN)
 
-    check_create_text = search_text_image.get_search_text(adb_helpers.grab_raw_rgba(device_id, ign=BOT_CONFIG.IGN), region=(211, 245, 336, 281))
+    check_create_text = search_text_image.get_search_text("startBuffing:check_create", adb_helpers.grab_raw_rgba(device_id, ign=BOT_CONFIG.IGN), region=(211, 245, 336, 281))
     if check_create_text is not None and check_create_text.lower() == "create":
         console_log_with_ign(BOT_CONFIG.IGN, "Create button detected, will create team first")
         adb_helpers.do_tap(DEVICE_ID, (275, 265), ign=BOT_CONFIG.IGN)

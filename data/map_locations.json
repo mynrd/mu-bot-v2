@@ -546,7 +546,7 @@
         "bossType": 2,
         "durationToRevive": 0,
         "mapId": "7-04",
-        "lastKilled": "2026-03-17T12:00:34.022109Z"
+        "lastKilled": "2026-03-17T12:06:26.176178Z"
       },
       {
         "id": 79,
@@ -556,8 +556,8 @@
         "bossType": 2,
         "durationToRevive": 0,
         "mapId": "7-04",
-        "lastKilled": "2026-03-17T11:57:37.745970Z",
-        "engageDate": "2026-03-17T12:01:04.896242Z",
+        "lastKilled": "2026-03-17T12:09:18.330630Z",
+        "engageDate": "2026-03-17T12:11:15.885561Z",
         "engageBy": "local"
       }
     ]
