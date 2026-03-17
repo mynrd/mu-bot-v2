@@ -27,6 +27,10 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
+# Data / config
+data/attack_records.json
+config/
+
 # Screenshots / temp images
 *.png
 *.jpg

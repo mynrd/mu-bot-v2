@@ -370,8 +370,7 @@ def _teleport_to_map_location(device, ign, search_text, second_tap_coordinate, l
 
 def teleport_to_swamp_of_abyss(device, ign):
     _teleport_to_map_location(device, ign, [
-        "Swamp of Abyss",
-        "amp of Abyss"
+        "Cross|Swamp"
     ], (1352, 614), "corridor_of_agony")
 
 def teleport_to_corridor_of_agony(device, ign):
