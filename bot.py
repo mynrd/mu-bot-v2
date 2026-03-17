@@ -151,7 +151,7 @@ def main(args) -> int:
             prev=state.BOT_CONFIG if isinstance(state.BOT_CONFIG, BotSettings) else None,
         )
         if isinstance(state.BOT_CONFIG, BotSettings):
-            state.console_log(f"Updating bot configuration from local config: {new_settings}")
+            # state.console_log(f"Updating bot configuration from local config: {new_settings}")
             state.BOT_CONFIG.__dict__.update(new_settings.__dict__)
         else:
             state.BOT_CONFIG = new_settings

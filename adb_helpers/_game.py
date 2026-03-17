@@ -324,6 +324,43 @@ def switch_channel(device: str, ign: str, channel: int, debug: bool = False) -> 
     raise RuntimeError(f"Could not find channel text '{search_text}' in region {region_to_scan}. Detected texts: {detected_texts}")
 
 
+def teleport_to_corridor_of_agony(device, ign):
+    do_clear_screen(device, ign=ign)
+    do_open_map(device, ign=ign)
+    time.sleep(1)
+
+    swipe_down(device, (400, 340), (400, 630), 100, andPause=False)
+    time.sleep(0.2)
+    swipe_down(device, (400, 340), (400, 630), 100, andPause=False)
+    time.sleep(0.2)
+    swipe_down(device, (400, 340), (400, 630), 100, andPause=False)
+    time.sleep(1)
+
+    regionToScanText = (254, 184, 562, 748)
+    search_text = "Corridor"
+
+    attempt_count = 0
+    max_attempts = 6
+
+    while True:
+        swipe_up(device, (400, 670), (400, 300), 100, andPause=True)
+        time.sleep(0.5)
+        coordinate = get_coordinate_of_text(device, search_text, ign, regionToScanText, debug=False)
+        if coordinate:
+            print(f"Found '{search_text}' on the map at {coordinate}, tapping to teleport...")
+            do_tap(device, coordinate, ign)
+            time.sleep(3)
+            do_open_map(device, ign=ign)
+            time.sleep(1)
+            do_tap(device, (1352, 614), ign)
+            time.sleep(3)
+            do_clear_screen(device, ign=ign)
+            break
+        else:
+            attempt_count += 1
+            if attempt_count >= max_attempts:
+                raise Exception(f"Failed to find '{search_text}' after {max_attempts} attempts in corridor_of_agony")
+
 def teleport_to_endless_abyss(device, ign):
     do_clear_screen(device, ign=ign)
     do_open_map(device, ign=ign)
@@ -347,11 +384,11 @@ def teleport_to_endless_abyss(device, ign):
         time.sleep(0.5)
         coordinate = get_coordinate_of_text(device, search_text, ign, regionToScanText, debug=False)
         if coordinate:
+            print(f"Found '{search_text}' on the map at {coordinate}, tapping to teleport...")
             do_tap(device, coordinate, ign)
             time.sleep(3)
             do_open_map(device, ign=ign)
             time.sleep(1)
-            print(f"Found '{search_text}' on the map at {coordinate}, tapping to teleport...")
             do_tap(device, (994, 782), ign)
             time.sleep(3)
             do_clear_screen(device, ign=ign)

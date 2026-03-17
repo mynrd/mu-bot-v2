@@ -427,8 +427,13 @@ def go_to_darkshade_canyon(device):
 
 
 def go_to_endless_abyss(device):
-    state.console_log("Going to the Abyss...")
+    state.console_log("Going to the Endless Abyss...")
     adb_helpers.teleport_to_endless_abyss(device, state.BOT_CONFIG.IGN)
+
+
+def go_to_corridor_of_agony(device):
+    state.console_log("Going to the Corridor of Agony...")
+    adb_helpers.teleport_to_corridor_of_agony(device, state.BOT_CONFIG.IGN)
 
 
 # ---------------------------------------------------------------------------
@@ -513,6 +518,11 @@ def go_to_buffer(device, ign, debug=False):
         state.console_log(ign, "Going to the buffer...")
         adb_helpers.go_to_target_location(device, ign=ign, target=(1160, 455), debug=debug)
         time.sleep(3)
+
+    if state.BOT_CONFIG.BUFFER_MAP == "CORRIDOR_OF_AGONY":
+        state.console_log(ign, "Going to the buffer map Cooridor of Agony...")
+        go_to_corridor_of_agony(device)
+
 
     if state.BOT_CONFIG.BUFFER_MAP == "ENDLESS_ABYSS":
         state.console_log(ign, "Going to the buffer map Endless Abyss...")

@@ -9,17 +9,20 @@ from adb_helpers._core import retry_on_timeout, run_adb_cmd, run_cmd
 
 
 def set_show_touches(device: str, enabled: bool = True, ign: str = "player") -> None:
-    """Enable or disable the 'Show taps' overlay on the device screen.
+    """Enable or disable the 'Show taps' and 'Pointer location' overlays.
 
-    Maps to: adb shell settings put system show_touches {1|0}
+    Sets both Android developer options so at least one works on the emulator:
+      - show_touches: shows a fading circle where taps occur
+      - pointer_location: shows a crosshair + coordinate bar at the top
     """
     value = "1" if enabled else "0"
-    args = ["shell", "settings", "put", "system", "show_touches", value]
-    code, out, err = run_adb_cmd(device, args)
-    if code != 0:
-        console_log_with_ign(ign, f"Failed to set show_touches to {value}: {err or out}")
-    else:
-        console_log_with_ign(ign, f"show_touches set to {value}")
+    for setting in ("show_touches", "pointer_location"):
+        args = ["shell", "settings", "put", "system", setting, value]
+        code, out, err = run_adb_cmd(device, args)
+        if code != 0:
+            console_log_with_ign(ign, f"Failed to set {setting} to {value}: {err or out}")
+        else:
+            console_log_with_ign(ign, f"{setting} set to {value}")
 
 
 def disconnect(device: str, dry_run: bool = False, ign: str = "player") -> bool:

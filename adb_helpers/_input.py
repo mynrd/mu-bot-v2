@@ -10,7 +10,6 @@ from adb_helpers._screen import _coord_to_px, coords_to_pixels, get_screen_size
 
 DEFAULT_REGION_HALF_SIZE = 10
 
-
 def _do_swipe(
     device,
     x1: int,
@@ -24,16 +23,7 @@ def _do_swipe(
 
     Coordinates must be pixel values.
     """
-    args = [
-        "shell",
-        "input",
-        "swipe",
-        str(x1),
-        str(y1),
-        str(x2),
-        str(y2),
-        str(duration_ms),
-    ]
+    args = ["shell", "input", "swipe", str(x1), str(y1), str(x2), str(y2), str(duration_ms)]
     code, out, err = run_adb_cmd(device, args, dry_run=dry_run)
     if code != 0:
         raise RuntimeError(f"adb swipe failed: {err or out}")
@@ -66,16 +56,7 @@ def swipe_up(
     y1 = _coord_to_px(start[1], h)
     x2 = _coord_to_px(end[0], w)
     y2 = _coord_to_px(end[1], h)
-    args = [
-        "shell",
-        "input",
-        "swipe",
-        str(x1),
-        str(y1),
-        str(x2),
-        str(y2),
-        str(duration_ms),
-    ]
+    args = ["shell", "input", "swipe", str(x1), str(y1), str(x2), str(y2), str(duration_ms)]
     code, out, err = run_adb_cmd(device, args, dry_run=dry_run)
     if code != 0:
         raise RuntimeError(f"adb swipe failed: {err or out}")
@@ -112,16 +93,7 @@ def swipe_down(
     y1 = _coord_to_px(start[1], h)
     x2 = _coord_to_px(end[0], w)
     y2 = _coord_to_px(end[1], h)
-    args = [
-        "shell",
-        "input",
-        "swipe",
-        str(x1),
-        str(y1),
-        str(x2),
-        str(y2),
-        str(duration_ms),
-    ]
+    args = ["shell", "input", "swipe", str(x1), str(y1), str(x2), str(y2), str(duration_ms)]
     code, out, err = run_adb_cmd(device, args, dry_run=dry_run)
     if code != 0:
         raise RuntimeError(f"adb swipe failed: {err or out}")

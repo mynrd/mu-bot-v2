@@ -164,7 +164,8 @@
     letter-spacing: 0.02em;
   }
   .field input[type="text"],
-  .field input[type="number"] {
+  .field input[type="number"],
+  .field select {
     width: 100%;
     padding: 9px 12px;
     border-radius: var(--radius-sm);
@@ -175,12 +176,14 @@
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     transition: border-color 0.15s;
   }
-  .field input:focus {
+  .field input:focus,
+  .field select:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
   }
-  .field input.changed {
+  .field input.changed,
+  .field select.changed {
     border-color: var(--accent);
     background: rgba(99,102,241,0.06);
   }
@@ -420,7 +423,7 @@ const knownCodes = new Set(KNOWN_MAPS.map(m => m.code));
 
 // --- Field metadata ---
 const FIELD_META = {
-  PORT:          { label: 'Port',          type: 'number' },
+  PORT:          { label: 'Port',          type: 'text' },
   IGN:           { label: 'IGN',           type: 'text' },
   MAP:           { label: 'Map(s)',        type: 'map-select' },
   CHANNELS:      { label: 'Channels (comma-separated)', type: 'text' },
@@ -439,7 +442,7 @@ const FIELD_META = {
   TAP_ON_MAP_WHILE_WALKING: { label: 'Tap on Map While Walking', type: 'bool' },
   IS_BUFFER:     { label: 'Buffer Mode',   type: 'bool' },
   BUFFER:        { label: 'Buffer',        type: 'text' },
-  BUFFER_MAP:    { label: 'Buffer Map',    type: 'text' },
+  BUFFER_MAP:    { label: 'Buffer Map',    type: 'select', options: ['ENDLESS_ABYSS', 'DIVINE', 'CORRIDOR_OF_AGONY'] },
   BUFFER_COORDINATE:  { label: 'Buffer Coordinate', type: 'text', placeholder: 'e.g. 857,525' },
   DEBUFF_BEFORE_BUFF: { label: 'Debuff Before Buff', type: 'bool' },
   BUFFER_WHITELIST_NAMES:  { label: 'Buffer Whitelist - Names (comma-separated)',  type: 'text' },
@@ -484,14 +487,14 @@ const SECTIONS = [
   },
   {
     title: 'General Settings',
-    show: () => !toBool(form.AFK_MODE) && !toBool(form.IS_BUFFER),
-    fields: ['RESTART_AFTER_MINUTES', 'TAP_SKILL_CANCEL_ATTACK_COORDS', 'ADB_SHOW_TAP'],
+    show: () => !toBool(form.AFK_MODE),
+    fields: ['RESTART_AFTER_MINUTES', 'TAP_SKILL_CANCEL_ATTACK_COORDS', 'ADB_SHOW_TAP', 'BUFFER_MAP'],
     layout: 'two-cols',
   },
   {
     title: 'Buffer Settings',
     show: () => toBool(form.IS_BUFFER) && !toBool(form.AFK_MODE),
-    fields: ['BUFFER', 'BUFFER_MAP', 'BUFFER_COORDINATE', 'DEBUFF_BEFORE_BUFF',
+    fields: ['BUFFER', 'BUFFER_COORDINATE', 'DEBUFF_BEFORE_BUFF',
              'BUFFER_WHITELIST_NAMES', 'BUFFER_WHITELIST_GUILDS'],
     layout: 'grid',
   },
@@ -602,6 +605,15 @@ function renderForm() {
           </div>`;
         } else if (meta.type === 'map-select') {
           html += renderMapSelect(key, meta);
+        } else if (meta.type === 'select') {
+          const changed = form[key] !== originalValues[key];
+          let opts = meta.options.map(o => `<option value="${esc(o)}" ${form[key] === o ? 'selected' : ''}>${esc(o)}</option>`).join('');
+          html += `<div class="field">
+            <label>${esc(meta.label)}</label>
+            <select id="f_${key}" data-key="${key}" class="${changed ? 'changed' : ''}" onchange="onInput(this)">
+              ${opts}
+            </select>
+          </div>`;
         } else {
           const inputType = meta.type === 'number' ? 'number' : 'text';
           const changed = form[key] !== originalValues[key];
