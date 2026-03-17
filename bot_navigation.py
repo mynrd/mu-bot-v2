@@ -10,6 +10,7 @@ from util import console_log_with_ign
 # Map navigation functions
 # ---------------------------------------------------------------------------
 
+
 def go_to_vip_map(device: str):
     adb_helpers.teleport_to_divine(device, state.BOT_CONFIG.IGN)
 
@@ -25,7 +26,9 @@ def go_to_vip_map(device: str):
     time.sleep(2)
     adb_helpers.do_clear_screen(device, ign=state.BOT_CONFIG.IGN)
 
-    adb_helpers.do_tap(device, (82.71, 50.09), ign=state.BOT_CONFIG.IGN, remarks="Tap to Talk to NPC")
+    adb_helpers.do_tap(
+        device, (82.71, 50.09), ign=state.BOT_CONFIG.IGN, remarks="Tap to Talk to NPC"
+    )
     time.sleep(1)
     if state.VIP_MAP == 2:
         adb_helpers.do_tap(
@@ -100,26 +103,6 @@ def go_to_abyssal_ferea(device):
     time.sleep(5)
 
 
-def go_to_swamp_of_abyss(device):
-    state.console_log("Going to the Swamp of Abyss...")
-
-    adb_helpers.do_clear_screen(device, ign=state.BOT_CONFIG.IGN)
-    adb_helpers.do_open_map(device, ign=state.BOT_CONFIG.IGN)
-    time.sleep(1)
-
-    for _ in range(3):
-        adb_helpers.process_action_command(
-            device,
-            "swipe 21.3285,63.6558 21.6086,26.1024 300",
-            ign=state.BOT_CONFIG.IGN,
-        )
-        time.sleep(0.5)
-
-    time.sleep(2)
-    adb_helpers.do_tap(device, (21.0484, 58.9616), ign=state.BOT_CONFIG.IGN)
-    time.sleep(5)
-
-
 def go_to_swamp_of_darkness(device):
     state.console_log("Going to the Swamp of Darkness...")
     ign = state.BOT_CONFIG.IGN
@@ -183,9 +166,19 @@ def go_to_kalima(device, kalima_number=None):
 
     time.sleep(2)
 
-    adb_helpers.do_tap(device, (22.029, 28.6451), ign=state.BOT_CONFIG.IGN, remarks="Tap to Kalima location")
+    adb_helpers.do_tap(
+        device,
+        (22.029, 28.6451),
+        ign=state.BOT_CONFIG.IGN,
+        remarks="Tap to Kalima location",
+    )
     time.sleep(0.2)
-    adb_helpers.do_tap(device, (22.029, 28.6451), ign=state.BOT_CONFIG.IGN, remarks="Tap to Kalima location")
+    adb_helpers.do_tap(
+        device,
+        (22.029, 28.6451),
+        ign=state.BOT_CONFIG.IGN,
+        remarks="Tap to Kalima location",
+    )
     time.sleep(5)
 
     kalima_coords = {
@@ -228,7 +221,14 @@ def go_to_kalima(device, kalima_number=None):
         )
 
     time.sleep(0.5)
-    adb_helpers.do_tap(device, (50.2691, 76.5832), ign=state.BOT_CONFIG.IGN, remarks="Tap to Enter to Kalima " + str(kalima_number) if kalima_number else "...")
+    adb_helpers.do_tap(
+        device,
+        (50.2691, 76.5832),
+        ign=state.BOT_CONFIG.IGN,
+        remarks=(
+            "Tap to Enter to Kalima " + str(kalima_number) if kalima_number else "..."
+        ),
+    )
     time.sleep(5)
 
 
@@ -337,15 +337,24 @@ def go_to_superb_realm(device):
 
     img = adb_helpers.grab_raw_rgba(device, ign=state.BOT_CONFIG.IGN)
 
-    res = image_search_pattern.get_location_by_template_by_img(img, state.IMG_TEMPLATE_BOSS_CHALLENGE, region=(1424, 13, 1552, 154), threshold=0.6)
+    res = image_search_pattern.get_location_by_template_by_img(
+        img,
+        state.IMG_TEMPLATE_BOSS_CHALLENGE,
+        region=(1424, 13, 1552, 154),
+        threshold=0.6,
+    )
 
     if res is None:
-        console_log_with_ign(state.BOT_CONFIG.IGN, "Couldn't find Boss Challenge button, retrying...")
+        console_log_with_ign(
+            state.BOT_CONFIG.IGN, "Couldn't find Boss Challenge button, retrying..."
+        )
         adb_helpers.do_clear_screen(device, ign=state.BOT_CONFIG.IGN)
         adb_helpers.do_tap(device, (82.1272, 4.83642), ign=state.BOT_CONFIG.IGN)
         time.sleep(1)
 
-    console_log_with_ign(state.BOT_CONFIG.IGN, "Found Boss Challenge button, proceeding...")
+    console_log_with_ign(
+        state.BOT_CONFIG.IGN, "Found Boss Challenge button, proceeding..."
+    )
     adb_helpers.do_tap(device, (77.7689, 8.25036), ign=state.BOT_CONFIG.IGN)
     time.sleep(2)
 
@@ -440,6 +449,7 @@ def go_to_corridor_of_agony(device):
 # Buff / debuff functions
 # ---------------------------------------------------------------------------
 
+
 def debuff(device, ign, debug=False):
     state.console_log(ign, "Applying debuff...")
 
@@ -461,25 +471,39 @@ def debuff(device, ign, debug=False):
         )
         if expired is not None:
             close_coords = adb_helpers.coords_to_percents(1495, 302)
-            adb_helpers.do_tap(device, close_coords, ign=ign, debug=state.BOT_CONFIG.DEBUG)
+            adb_helpers.do_tap(
+                device, close_coords, ign=ign, debug=state.BOT_CONFIG.DEBUG
+            )
 
-        text = get_text_gray(img, region=(1582, 639, 1685, 669), ign=ign, compare_text="Element", debug=state.BOT_CONFIG.DEBUG)
+        text = get_text_gray(
+            img,
+            region=(1582, 639, 1685, 669),
+            ign=ign,
+            compare_text="Element",
+            debug=state.BOT_CONFIG.DEBUG,
+        )
         if debug:
             state.console_log(ign, f"[DEBUG] Detected text: '{text}'")
         if "element" not in text.lower():
             if debug:
                 state.console_log(ign, "[DEBUG] Tapping menu button")
-            adb_helpers.do_tap(device, (97.3499, 26.1414), ign=ign, debug=state.BOT_CONFIG.DEBUG)
+            adb_helpers.do_tap(
+                device, (97.3499, 26.1414), ign=ign, debug=state.BOT_CONFIG.DEBUG
+            )
             time.sleep(0.5)
         else:
             if debug:
-                state.console_log(ign, "[DEBUG] 'Element' text found; proceeding to debuff.")
+                state.console_log(
+                    ign, "[DEBUG] 'Element' text found; proceeding to debuff."
+                )
             break
 
     adb_helpers.do_tap(device, (85.383, 57.732), debug=state.BOT_CONFIG.DEBUG, ign=ign)
     time.sleep(1)
 
-    adb_helpers.do_tap(device, (83.0572, 10.0147), debug=state.BOT_CONFIG.DEBUG, ign=ign)
+    adb_helpers.do_tap(
+        device, (83.0572, 10.0147), debug=state.BOT_CONFIG.DEBUG, ign=ign
+    )
     time.sleep(0.5)
 
     adb_helpers.do_tap(device, (79.793, 93.6672), debug=state.BOT_CONFIG.DEBUG, ign=ign)
@@ -516,13 +540,14 @@ def go_to_buffer(device, ign, debug=False):
         adb_helpers.do_open_map(device, ign=ign)
         time.sleep(1)
         state.console_log(ign, "Going to the buffer...")
-        adb_helpers.go_to_target_location(device, ign=ign, target=(1160, 455), debug=debug)
+        adb_helpers.go_to_target_location(
+            device, ign=ign, target=(1160, 455), debug=debug
+        )
         time.sleep(3)
 
     if state.BOT_CONFIG.BUFFER_MAP == "CORRIDOR_OF_AGONY":
         state.console_log(ign, "Going to the buffer map Cooridor of Agony...")
         go_to_corridor_of_agony(device)
-
 
     if state.BOT_CONFIG.BUFFER_MAP == "ENDLESS_ABYSS":
         state.console_log(ign, "Going to the buffer map Endless Abyss...")
@@ -545,15 +570,24 @@ def go_to_buffer(device, ign, debug=False):
             k_coord_x = float(state.BOT_CONFIG.BUFFER_COORDINATE.split(",")[0])
             k_coord_y = float(state.BOT_CONFIG.BUFFER_COORDINATE.split(",")[1])
 
-            adb_helpers.go_to_target_location(device, ign=ign, target=(k_coord_x, k_coord_y), debug=debug)
+            adb_helpers.go_to_target_location(
+                device, ign=ign, target=(k_coord_x, k_coord_y), debug=debug
+            )
             time.sleep(3)
         else:
-            raise ValueError(f"Invalid BUFFER_MAP '{state.BOT_CONFIG.BUFFER_MAP}' for Kalima")
+            raise ValueError(
+                f"Invalid BUFFER_MAP '{state.BOT_CONFIG.BUFFER_MAP}' for Kalima"
+            )
 
     adb_helpers.do_clear_screen(device, ign=ign, debug=state.BOT_CONFIG.DEBUG)
     time.sleep(0.2)
 
-    adb_helpers.do_check_if_buffed(device, ign=ign, min_dmg_red=state.BOT_CONFIG.THRESHOLD_DMG_RED, debug=state.BOT_CONFIG.DEBUG)
+    adb_helpers.do_check_if_buffed(
+        device,
+        ign=ign,
+        min_dmg_red=state.BOT_CONFIG.THRESHOLD_DMG_RED,
+        debug=state.BOT_CONFIG.DEBUG,
+    )
     state.START_TIME_25M = time.time()
     time.sleep(0.5)
 
@@ -585,6 +619,7 @@ def go_to_buffer_location(device, ign, doTeleportToDivine=True):
 # Map routing
 # ---------------------------------------------------------------------------
 
+
 def parse_vip_map_from_id(map_id: str) -> int | None:
     import re
 
@@ -594,15 +629,15 @@ def parse_vip_map_from_id(map_id: str) -> int | None:
 
 def go_to_map(device: str, map_id: str):
     if map_id == "7-01":
-        go_to_swamp_of_abyss(device)
+        adb_helpers.teleport_to_swamp_of_abyss(device, state.BOT_CONFIG.IGN)
         state.MAP_INFO = state.get_map_info(map_id)
         return
     if map_id == "7-03":
-        go_to_swamp_of_abyss(device)
+        adb_helpers.teleport_to_swamp_of_abyss(device, state.BOT_CONFIG.IGN)
         state.MAP_INFO = state.get_map_info(map_id)
         return
     if map_id == "7-04":
-        go_to_swamp_of_abyss(device)
+        adb_helpers.teleport_to_swamp_of_abyss(device, state.BOT_CONFIG.IGN)
         state.MAP_INFO = state.get_map_info(map_id)
         return
     if map_id == "7-02":
@@ -658,7 +693,7 @@ def go_to_map(device: str, map_id: str):
 
 def go_to_afk_spot(device: str):
     console_log_with_ign(state.BOT_CONFIG.IGN, "Going to AFK spot...")
-    go_to_swamp_of_abyss(device)
+    adb_helpers.teleport_to_swamp_of_abyss(device, state.BOT_CONFIG.IGN)
     adb_helpers.switch_channel(device, ign=state.BOT_CONFIG.IGN, channel=3)
     time.sleep(1)
     adb_helpers.do_clear_screen(device, ign=state.BOT_CONFIG.IGN)

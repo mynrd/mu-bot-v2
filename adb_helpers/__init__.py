@@ -75,5 +75,6 @@ from adb_helpers._game import (
     switch_channel,
     teleport_to_divine,
     teleport_to_endless_abyss,
-    teleport_to_corridor_of_agony
+    teleport_to_corridor_of_agony,
+    teleport_to_swamp_of_abyss
 )
