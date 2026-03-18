@@ -396,30 +396,22 @@ let currentFile = null;
 let originalValues = {};
 let form = {};
 
-// --- Known maps for multi-select ---
-const KNOWN_MAPS = [
-  { code: '5.5-01', name: 'Abyssal Ferea - Red Boss' },
-  { code: '6-01',   name: 'Dissimilated Nixies Lake' },
-  { code: '6-02',   name: 'Dissimilated Nixies Lake - All' },
-  { code: '7-01',   name: 'Swamp of Abyss' },
-  { code: '7-02',   name: 'Swamp of Darkness' },
-  { code: '7-03',   name: 'Swamp of Abyss - Golden Boss Set 1' },
-  { code: '7-04',   name: 'Swamp of Abyss - Golden Boss Set 2' },
-  { code: 'FF-01',  name: 'Foggy Forest - Red' },
-  { code: 'K-01',   name: 'Kalima' },
-  { code: 'LOD-01', name: 'Land of Demons - Red' },
-  { code: 'SANC2-01', name: 'Sanctuary VIP 2' },
-  { code: 'SANC3-01', name: 'Sanctuary VIP 3 - Red Boss' },
-  { code: 'SANC5-01', name: 'Sanctuary VIP 5 - 1' },
-  { code: 'SANC5-02', name: 'Sanctuary VIP 5 - 2' },
-  { code: 'SANC5-G-01', name: 'Sanctuary 5' },
-  { code: 'SANC5-G-02', name: 'Sanctuary 5 - Golden Only 2' },
-  { code: 'SB-01',  name: 'Superb Realm 8' },
-  { code: 'SB-02',  name: 'Superb Realm 9' },
-  { code: '8-01',   name: 'Darkshade Canyon' },
-  { code: 'ENDLESS_ABYSS', name: 'Endless Abyss' },
-];
-const knownCodes = new Set(KNOWN_MAPS.map(m => m.code));
+// --- Known maps for multi-select (loaded from API) ---
+let KNOWN_MAPS = [];
+let knownCodes = new Set();
+
+async function loadKnownMaps() {
+  try {
+    const res = await fetch(`${API}/api/maps`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const maps = await res.json();
+    KNOWN_MAPS = maps.map(m => ({ code: m.mapId, name: m.name, redCount: m.redCount || 0, goldenCount: m.goldenCount || 0 }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    knownCodes = new Set(KNOWN_MAPS.map(m => m.code));
+  } catch (e) {
+    console.error('Failed to load maps:', e);
+  }
+}
 
 // --- Field metadata ---
 const FIELD_META = {
@@ -665,9 +657,11 @@ function renderMapSelect(key, meta) {
   let optionsHtml = '';
   KNOWN_MAPS.forEach(m => {
     const sel = selected.includes(m.code);
+    const counts = m.redCount || m.goldenCount
+      ? ` <span style="opacity:.6;font-size:.85em">(R:${m.redCount} G:${m.goldenCount})</span>` : '';
     optionsHtml += `<div class="map-option ${sel ? 'selected' : ''}" data-code="${esc(m.code)}" onclick="toggleMapOption(this)">
       <div class="check"></div>
-      <span class="map-label">${esc(m.name)}</span>
+      <span class="map-label">${esc(m.name)}${counts}</span>
       <span class="map-code">${esc(m.code)}</span>
     </div>`;
   });
@@ -776,6 +770,7 @@ async function saveConfig() {
 }
 
 loadFiles();
+loadKnownMaps();
 </script>
 </body>
 </html>

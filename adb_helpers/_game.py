@@ -166,8 +166,7 @@ def do_check_if_buffed(device, ign, min_dmg_red=0, debug=False):
 
     while True:
         img_stat = grab_raw_rgba(device, ign, debug)
-        # res = search_text_image.get_search_text("do_check_if_buffed:dmg_reduction",img_stat, region=(1478, 104, 1890, 973), debug=False)
-        res = search_text_image.get_search_text_old(img_stat, region=(1478, 104, 1890, 973), debug=False)
+        res = search_text_image.get_text_stats(img_stat, region=(1478, 104, 1890, 973), debug=False)
 
         lines = res.splitlines()
 
@@ -384,36 +383,7 @@ def teleport_to_endless_abyss(device, ign):
 
 
 def teleport_to_divine(device, ign):
-    console_log_with_ign(ign, "Teleporting to Divine Realm...")
-
-    while True:
-        do_clear_screen(device, ign=ign)
-        do_open_map(device, ign=ign)
-        time.sleep(0.2)
-
-        process_action_command(device, "swipe 22.0887,26.1414 22.1301,57.511 300", ign=ign)
-        time.sleep(0.2)
-        process_action_command(device, "swipe 22.0887,26.1414 22.1301,57.511 300", ign=ign)
-        time.sleep(0.2)
-        process_action_command(device, "swipe 22.0887,26.1414 22.1301,57.511 300", ign=ign)
-        time.sleep(1.5)
-
-        process_action_command(device, "swipe 20.804,66.4948  21.0112,24.1532 300", ign=ign)
-        time.sleep(3)
-
-        img = grab_raw_rgba(device, ign=ign, debug=False)
-        pattern = cv2.imread(os.path.join(HERE, "images", "divine-realm.png"))
-        regionMapList = (248, 180, 571, 755)
-        divineRealmCoordinate = image_search_pattern.get_location_by_template(img, pattern, regionMapList, threshold=0.75, debug=False)
-        if divineRealmCoordinate is not None:
-            console_log_with_ign(ign, "Found Divine Realm on the map at", divineRealmCoordinate)
-            break
-        console_log_with_ign(ign, "Couldn't find Divine Realm on the map, retrying...")
-        time.sleep(1)
-
-    do_tap(device, (divineRealmCoordinate[0], divineRealmCoordinate[1]), ign=ign)
-    time.sleep(8)
-
+    _teleport_to_map_location(device, ign, "Divine", (994, 782), "go_to_divine_realm")
 
 def recycle_inventory(device, ign, is_free_player=False, bot_id=None, debug=False):
     console_log_with_ign(ign, "Recycling inventory...")

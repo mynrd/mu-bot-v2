@@ -224,8 +224,9 @@ def _run_setting(img_bgr, setting):
     ocr_input = _preprocess(img_bgr, setting)
     scale = setting.get("scale", 3)
     psm = setting.get("psm", 7)
-    up = cv2.resize(ocr_input, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-    text = pytesseract.image_to_string(up, config=f"--psm {psm}").lower().strip()
+    if scale > 1:
+        ocr_input = cv2.resize(ocr_input, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+    text = pytesseract.image_to_string(ocr_input, config=f"--psm {psm}").lower().strip()
     elapsed = time.time() - t0
     return (setting, text, elapsed)
 

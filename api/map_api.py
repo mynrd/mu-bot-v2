@@ -21,12 +21,16 @@ def get_maps():
     locations = local_data.load_map_locations()
     result = []
     for loc in locations:
+        red_count = sum(1 for b in loc.bosses if b.bossType == 1)
+        golden_count = sum(1 for b in loc.bosses if b.bossType == 2)
         result.append({
             "id": loc.id,
             "mapId": loc.mapId,
             "name": loc.name,
             "totalChannel": loc.totalChannel,
             "bossCount": len(loc.bosses),
+            "redCount": red_count,
+            "goldenCount": golden_count,
         })
     return jsonify(result)
 

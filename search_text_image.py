@@ -40,7 +40,7 @@ def get_search_text(
     from learning_ocr_search_text import get_text
     return get_text(source, img, search=search, region=region, ign=ign, show_original=show_original, debug=debug)
 
-def get_search_text_old(
+def get_text_stats(
     img: ImageLike,
     search: Optional[str] = None,
     region: Optional[Tuple[int, int, int, int]] = None,

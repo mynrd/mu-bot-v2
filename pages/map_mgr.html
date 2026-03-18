@@ -392,6 +392,7 @@ function toast(msg) {
 async function loadMaps() {
   const res = await fetch(`${API}/api/maps`);
   const maps = await res.json();
+  maps.sort((a, b) => a.name.localeCompare(b.name));
   const sel = document.getElementById('mapSelect');
   sel.innerHTML = '<option value="">Select a map...</option>';
   maps.forEach(m => {
