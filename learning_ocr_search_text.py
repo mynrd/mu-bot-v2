@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import random
 import cv2
 import numpy as np
 import pytesseract
@@ -324,6 +325,8 @@ def get_text(
     img: ImageLike,
     search: Optional[str] = None,
     region: Optional[Tuple[int, int, int, int]] = None,
+    ign: Optional[str] = None,
+    show_original: bool = False,
     debug: bool = False,
 ) -> str:
     img = helpers_to_bgr(img)
@@ -335,11 +338,17 @@ def get_text(
     batch_size = _get_batch_size()
 
     winnerFirst = _sort_settings_by_score(source, "desc")
-    losserFirst = _sort_settings_by_score(source, "asc")
 
-    top = winnerFirst[:2]
-    top_keys = {_setting_key(s) for s in top}
-    ordered = top + [s for s in losserFirst if _setting_key(s) not in top_keys]
+    # Epsilon-greedy: 20% pure exploration, 80% exploit top 2 + shuffle rest
+    if random.random() < 0.2:
+        ordered = list(winnerFirst)
+        random.shuffle(ordered)
+    else:
+        top = winnerFirst[:2]
+        top_keys = {_setting_key(s) for s in top}
+        rest = [s for s in winnerFirst if _setting_key(s) not in top_keys]
+        random.shuffle(rest)
+        ordered = top + rest
 
     all_results = []
 

@@ -281,7 +281,7 @@ def monitor_until_its_gone(device, ign, interval=2, skipNames: List[str] = [], i
             continue
         else:
             console_log_with_ign(ign, "Boss is no longer active, exiting monitor.")
-            time.sleep(5)
+            time.sleep(1)
             return
 
 
