@@ -189,10 +189,11 @@ def engage_and_check_isvalid(device, ign, skipNames: List[str] = [], ignoreName=
 
     console_log_with_ign(ign, "Starting kill action sequence...")
 
+    # Clicking Icon Attack (not the COG icon) to ensure auto-attack mode is active
     adb_helpers.do_tap(device, (92.7152, 81.8851), ign=ign, remarks="Tap Attack", debug=debug)
     time.sleep(0.1)
     adb_helpers.do_tap(device, (92.7152, 81.8851), ign=ign, remarks="Tap Attack", debug=debug)
-    time.sleep(3)
+    time.sleep(2)
 
     console_log_with_ign(ign, "Ensuring auto-attack mode is active...")
 
@@ -204,6 +205,12 @@ def engage_and_check_isvalid(device, ign, skipNames: List[str] = [], ignoreName=
             return False
 
         console_log_with_ign(ign, f"Kill action attempt {attempt} of {max_retries}...")
+
+        # One attempt before the last, enable debug so the final retry has full logging
+        if attempt == max_retries - 1 and state.BOT_CONFIG.DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK:
+            console_log_with_ign(ign, "Nearing max retries with DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK enabled. Switching to DEBUG mode for remaining attempts.")
+            debug = True
+
         check, skipUsers = True, []
         if not ignoreName:
             console_log_with_ign(ign, f"Checking if '{ign}' exists in region (attempt {attempt}/{max_retries})...")
@@ -663,7 +670,7 @@ def go_to_spot(device: str, skip_buffer=False):
             map_name = state.get_map_info(map_id).name
             state.console_log(f" - {map_id}: {map_name}")
             go_to_map(device, map_id)
-
+            state.console_log(f"Arrived at map {map_name}. Starting boss hunting...")
             if initiate_boss(device, map_id, map_name):
                 return
 

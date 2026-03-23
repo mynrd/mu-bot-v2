@@ -1,3 +1,4 @@
+import inspect
 import os
 import threading
 import time
@@ -71,7 +72,13 @@ IMG_TEMPLATE_LOW_LIFE = cv2.imread(os.path.join(adb_helpers.HERE, "images", "low
 # Utility functions that depend on global state
 # ---------------------------------------------------------------------------
 def console_log(*args, **kwargs):
-    console_log_with_ign(BOT_CONFIG.IGN, *args, **kwargs)
+    first = str(args[0]) if args else ""
+    if first.startswith("["):
+        console_log_with_ign(BOT_CONFIG.IGN, *args, **kwargs)
+    else:
+        frame = inspect.stack()[1]
+        caller = f"{os.path.basename(frame.filename)}:{frame.lineno}"
+        console_log_with_ign(BOT_CONFIG.IGN, f"[{caller}]", *args, **kwargs)
 
 
 def load_bot_config():
@@ -113,6 +120,8 @@ def load_bot_config():
         "BUFFER_WHITELIST_GUILDS": "",
         "TAP_SKILL_CANCEL_ATTACK_COORDS": ",".join(map(str, BOT_CONFIG.TAP_SKILL_CANCEL_ATTACK_COORDS)) if BOT_CONFIG.TAP_SKILL_CANCEL_ATTACK_COORDS else "",
         "DAWN_MODE": "true" if BOT_CONFIG.DAWN_MODE else "false",
+        "SKIP_VALIDATION_BUFF": "true" if BOT_CONFIG.SKIP_VALIDATION_BUFF else "false",
+        "SKIP_BUFFER": "true" if BOT_CONFIG.SKIP_BUFFER else "false",
     }
     for rk, rv in required_defaults.items():
         if rk not in config:

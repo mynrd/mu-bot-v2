@@ -442,6 +442,9 @@ const FIELD_META = {
   AFK_MODE:      { label: 'AFK Mode',      type: 'bool' },
   TAP_SKILL_CANCEL_ATTACK_COORDS: { label: 'Skill Cancel Attack Coords', type: 'text', placeholder: 'e.g. 84.0,76.0' },
   ADB_SHOW_TAP: { label: 'ADB Show Tap', type: 'bool' },
+  SKIP_VALIDATION_BUFF: { label: 'Skip Buff Validation', type: 'bool' },
+  SKIP_BUFFER: { label: 'Skip Buffer', type: 'bool' },
+  DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK: { label: 'Debug on Max Retries (Attack)', type: 'bool' },
 };
 
 // --- Sections & conditional logic ---
@@ -474,7 +477,8 @@ const SECTIONS = [
     title: 'Feature Toggles',
     show: () => !toBool(form.AFK_MODE) && !toBool(form.IS_BUFFER),
     fields: ['IGNORE_NAME', 'USE_TELEPORT', 'ENGAGE_RED_BOSS', 'ENGAGE_GOLDEN_BOSS', 'DEBUG',
-             'ON_WALK_MODE_GO_TO_STARTING_POINT', 'DETECT_LOW_LIFE', 'TAP_ON_MAP_WHILE_WALKING'],
+             'ON_WALK_MODE_GO_TO_STARTING_POINT', 'DETECT_LOW_LIFE', 'TAP_ON_MAP_WHILE_WALKING', 'SKIP_VALIDATION_BUFF', 'SKIP_BUFFER',
+             'DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK'],
     layout: 'checks',
   },
   {

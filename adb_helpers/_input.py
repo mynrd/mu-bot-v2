@@ -120,6 +120,11 @@ def do_tap(
     if not (isinstance(coords, (tuple, list)) and len(coords) == 2):
         raise TypeError("coords must be a tuple or list of two numbers (x, y)")
 
+    import inspect, os
+    frame = inspect.stack()[1]
+    caller = f"{os.path.basename(frame.filename)}:{frame.lineno}"
+    console_log_with_ign(ign, f"[{caller}] - Tapping at {coords} (mode={mode})")
+
     if remarks:
         console_log_with_ign(ign, f"Remarks: {remarks}")
 

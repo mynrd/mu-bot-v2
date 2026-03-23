@@ -11,6 +11,61 @@ from image_helpers import ImageLike
 
 
 # ---------------------------------------------------------------------------
+# OCR Engines — lazy-loaded singletons
+# ---------------------------------------------------------------------------
+_ocr_engines = {}
+
+
+def _get_engine(ocr_type):
+    """Lazy-load and cache OCR engine instances. Returns None if unavailable."""
+    if ocr_type in _ocr_engines:
+        return _ocr_engines[ocr_type]
+
+    try:
+        if ocr_type == "easyocr":
+            import easyocr
+            engine = easyocr.Reader(["en"], gpu=True, verbose=False)
+            _ocr_engines[ocr_type] = engine
+            return engine
+
+        if ocr_type == "rapidocr":
+            from rapidocr_onnxruntime import RapidOCR
+            engine = RapidOCR()
+            _ocr_engines[ocr_type] = engine
+            return engine
+    except Exception as e:
+        print(f"[OCR] Failed to load {ocr_type}: {e}")
+        _ocr_engines[ocr_type] = None  # cache the failure so we don't retry
+
+    return None  # tesseract uses pytesseract directly
+
+
+def _ocr_read(ocr_input, setting):
+    """Run OCR on a preprocessed image using the engine specified in setting."""
+    ocr_type = setting.get("ocr_type", "tesseract")
+
+    if ocr_type == "easyocr":
+        reader = _get_engine("easyocr")
+        if reader is None:
+            return ""
+        results = reader.readtext(ocr_input, detail=0)
+        return " ".join(results).lower().strip()
+
+    if ocr_type == "rapidocr":
+        engine = _get_engine("rapidocr")
+        if engine is None:
+            return ""
+        result, _ = engine(ocr_input)
+        if not result:
+            return ""
+        return " ".join(r[1] for r in result).lower().strip()
+
+    # Default: tesseract
+    psm = setting.get("psm", 7)
+    return pytesseract.image_to_string(ocr_input, config=f"--psm {psm}").lower().strip()
+
+
+# ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 _ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -164,6 +219,17 @@ def _preprocess(img_bgr, setting):
         mask = cv2.dilate(mask, kernel, iterations=1)
         return 255 - mask
 
+    if name == "gray_thresh_inv":
+        _, th = cv2.threshold(gray, setting["thresh"], 255, cv2.THRESH_BINARY_INV)
+        return th
+
+    if name == "white_hsv":
+        lo_s = setting.get("lo_s", 0)
+        hi_s = setting.get("hi_s", 50)
+        lo_v = setting.get("lo_v", 150)
+        mask = cv2.inRange(hsv, np.array([0, lo_s, lo_v]), np.array([180, hi_s, 255]))
+        return 255 - mask
+
     return gray
 
 
@@ -183,6 +249,16 @@ _DEFAULT_SETTINGS = [
     {"name": "gray_thresh",   "psm": 6, "scale": 4, "thresh": 210},
     {"name": "gray_thresh",   "psm": 6, "scale": 2, "thresh": 180},
     {"name": "gray_thresh",   "psm": 6, "scale": 1, "thresh": 180},
+    {"name": "gray_thresh_inv", "psm": 6, "scale": 2, "thresh": 120},
+    {"name": "gray_thresh_inv", "psm": 6, "scale": 3, "thresh": 140},
+    {"name": "white_hsv",     "psm": 6, "scale": 2},
+    {"name": "white_hsv",     "psm": 6, "scale": 3, "lo_v": 120, "hi_s": 80},
+    {"name": "gray_thresh",   "psm": 8, "scale": 4, "thresh": 120, "upscale_first": True},
+    {"name": "gray_thresh",   "psm": 8, "scale": 6, "thresh": 140, "upscale_first": True},
+    {"name": "raw",           "scale": 1, "ocr_type": "rapidocr"},
+    {"name": "gray_thresh",   "scale": 3, "thresh": 140, "ocr_type": "rapidocr"},
+    {"name": "raw",           "scale": 1, "ocr_type": "easyocr"},
+    {"name": "gray_thresh",   "scale": 4, "thresh": 180, "ocr_type": "easyocr"},
 ]
 
 
@@ -200,8 +276,10 @@ def _load_settings():
         return list(_DEFAULT_SETTINGS)
 
 
-def _sort_settings_by_score(source=""):
-    """Return SETTINGS ordered by score for a given source. Filters by source first."""
+def _sort_settings_by_score(source="", sort_by="asc"):
+    """Return SETTINGS ordered by score for a given source.
+    sort_by: "asc" (lowest score first) or "desc" (highest score first).
+    """
     all_scores = _load_scores()
     scores = all_scores.get(source, {})
 
@@ -212,7 +290,7 @@ def _sort_settings_by_score(source=""):
         # Primary: wins, Secondary: win_rate, Tertiary: faster is better
         return (entry["wins"], entry.get("win_rate", 0.0), -entry["avg_ms"])
 
-    return sorted(_load_settings(), key=_score, reverse=True)
+    return sorted(_load_settings(), key=_score, reverse=(sort_by == "desc"))
 
 
 # ---------------------------------------------------------------------------
@@ -221,12 +299,22 @@ def _sort_settings_by_score(source=""):
 def _run_setting(img_bgr, setting):
     """Preprocess + OCR for one setting. Returns (setting, text, elapsed)."""
     t0 = time.time()
-    ocr_input = _preprocess(img_bgr, setting)
     scale = setting.get("scale", 3)
-    psm = setting.get("psm", 7)
-    if scale > 1:
-        ocr_input = cv2.resize(ocr_input, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-    text = pytesseract.image_to_string(ocr_input, config=f"--psm {psm}").lower().strip()
+    preprocess = setting.get("name", "")
+
+    if preprocess == "raw":
+        # No preprocessing — feed raw BGR image directly to OCR engine
+        ocr_input = img_bgr
+    elif setting.get("upscale_first") and scale > 1:
+        # Upscale the raw image first, then preprocess (better for small text)
+        img_up = cv2.resize(img_bgr, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+        ocr_input = _preprocess(img_up, setting)
+    else:
+        ocr_input = _preprocess(img_bgr, setting)
+        if scale > 1:
+            ocr_input = cv2.resize(ocr_input, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+
+    text = _ocr_read(ocr_input, setting)
     elapsed = time.time() - t0
     return (setting, text, elapsed)
 
@@ -236,8 +324,6 @@ def get_text(
     img: ImageLike,
     search: Optional[str] = None,
     region: Optional[Tuple[int, int, int, int]] = None,
-    ign: Optional[str] = None,
-    show_original: bool = False,
     debug: bool = False,
 ) -> str:
     img = helpers_to_bgr(img)
@@ -247,7 +333,14 @@ def get_text(
 
     search_lower = search.lower() if search else None
     batch_size = _get_batch_size()
-    ordered = _sort_settings_by_score(source)
+
+    winnerFirst = _sort_settings_by_score(source, "desc")
+    losserFirst = _sort_settings_by_score(source, "asc")
+
+    top = winnerFirst[:2]
+    top_keys = {_setting_key(s) for s in top}
+    ordered = top + [s for s in losserFirst if _setting_key(s) not in top_keys]
+
     all_results = []
 
     # Process in batches
@@ -287,8 +380,26 @@ def get_text(
         if winner is not None:
             return winner[1]
 
-    # No match in any batch — return longest result
-    best = max(all_results, key=lambda r: len(r[1]))
+    # No match in any batch — pick the best result
+    if search_lower and all_results:
+        # Prefer the result whose text best matches the search term (LCS-based)
+        def _lcs_score(text):
+            """Longest common subsequence length between search_lower and text."""
+            s, t = search_lower, text.lower()
+            ls, lt = len(s), len(t)
+            if ls == 0 or lt == 0:
+                return 0
+            dp = [0] * (lt + 1)
+            for i in range(1, ls + 1):
+                prev = 0
+                for j in range(1, lt + 1):
+                    tmp = dp[j]
+                    dp[j] = prev + 1 if s[i - 1] == t[j - 1] else max(dp[j], dp[j - 1])
+                    prev = tmp
+            return dp[lt]
+        best = max(all_results, key=lambda r: (_lcs_score(r[1]), len(r[1])))
+    else:
+        best = max(all_results, key=lambda r: len(r[1]))
     if debug:
         print(f"  [no match] best: {_setting_key(best[0])} -> '{best[1]}'")
     return best[1]

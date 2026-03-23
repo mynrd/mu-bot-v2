@@ -61,7 +61,9 @@ def is_close_match(ign: str, foundText: str, threshold: float = 0.75) -> bool:
     vowels = set("aeiou")
     a_cons = "".join(ch for ch in _canon(ign, unify_vowels=False) if ch not in vowels)
     t_cons = "".join(ch for ch in _canon(foundText, unify_vowels=False) if ch not in vowels)
-    if len(a_cons) >= 2 and _lcs_len(a_cons, t_cons) < len(a_cons):
+    # Allow 1 dropped consonant for names with 4+ consonants (OCR often drops thin chars like 'r')
+    min_cons = max(len(a_cons) - 1, 2) if len(a_cons) >= 4 else len(a_cons)
+    if len(a_cons) >= 2 and _lcs_len(a_cons, t_cons) < min_cons:
         return False
 
     best_agree = 0.0
@@ -77,6 +79,10 @@ def is_close_match(ign: str, foundText: str, threshold: float = 0.75) -> bool:
 
     lcs_ratio = _lcs_len(a_norm, t_norm) / n
     if lcs_ratio >= threshold and max(best_agree, best_edit) >= (threshold - 0.05):
+        return True
+
+    # Strong LCS match: if almost all chars match as subsequence, accept with lower window score
+    if lcs_ratio >= (threshold + 0.05) and max(best_agree, best_edit) >= (threshold - 0.15):
         return True
 
     return False

@@ -546,7 +546,9 @@
         "bossType": 2,
         "durationToRevive": 0,
         "mapId": "7-04",
-        "lastKilled": "2026-03-17T12:06:26.176178Z"
+        "lastKilled": "2026-03-17T14:15:30.436135Z",
+        "engageDate": "2026-03-23T07:26:41.053720Z",
+        "engageBy": "local"
       },
       {
         "id": 79,
@@ -556,8 +558,8 @@
         "bossType": 2,
         "durationToRevive": 0,
         "mapId": "7-04",
-        "lastKilled": "2026-03-17T12:09:18.330630Z",
-        "engageDate": "2026-03-17T12:11:15.885561Z",
+        "lastKilled": "2026-03-17T14:18:17.688656Z",
+        "engageDate": "2026-03-23T06:57:30.736271Z",
         "engageBy": "local"
       }
     ]
@@ -683,7 +685,8 @@
         "coordY": 625,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC2-01"
+        "mapId": "SANC2-01",
+        "lastKilled": "2026-03-18T18:44:25.959139Z"
       },
       {
         "id": 93,
@@ -692,7 +695,8 @@
         "coordY": 572,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC2-01"
+        "mapId": "SANC2-01",
+        "lastKilled": "2026-03-18T18:46:34.587755Z"
       },
       {
         "id": 94,
@@ -1102,7 +1106,9 @@
         "coordY": 691,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02"
+        "mapId": "SANC5-G-02",
+        "engageDate": "2026-03-23T08:39:33.220770Z",
+        "engageBy": "local"
       },
       {
         "id": 136,
@@ -1111,7 +1117,8 @@
         "coordY": 656,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02"
+        "mapId": "SANC5-G-02",
+        "lastKilled": "2026-03-23T08:39:14.563243Z"
       },
       {
         "id": 137,
@@ -1120,7 +1127,9 @@
         "coordY": 549,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02"
+        "mapId": "SANC5-G-02",
+        "engageDate": "2026-03-23T08:34:30.987667Z",
+        "engageBy": "local"
       },
       {
         "id": 138,

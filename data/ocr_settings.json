@@ -68,5 +68,65 @@
     "psm": 6,
     "scale": 1,
     "thresh": 180
+  },
+  {
+    "name": "gray_thresh_inv",
+    "psm": 6,
+    "scale": 2,
+    "thresh": 120
+  },
+  {
+    "name": "gray_thresh_inv",
+    "psm": 6,
+    "scale": 3,
+    "thresh": 140
+  },
+  {
+    "name": "white_hsv",
+    "psm": 6,
+    "scale": 2
+  },
+  {
+    "name": "white_hsv",
+    "psm": 6,
+    "scale": 3,
+    "lo_v": 120,
+    "hi_s": 80
+  },
+  {
+    "name": "gray_thresh",
+    "psm": 8,
+    "scale": 4,
+    "thresh": 120,
+    "upscale_first": true
+  },
+  {
+    "name": "gray_thresh",
+    "psm": 8,
+    "scale": 6,
+    "thresh": 140,
+    "upscale_first": true
+  },
+  {
+    "name": "raw",
+    "scale": 1,
+    "ocr_type": "rapidocr"
+  },
+  {
+    "name": "gray_thresh",
+    "scale": 3,
+    "thresh": 140,
+    "ocr_type": "rapidocr"
+  },
+  {
+    "name": "raw",
+    "scale": 1,
+    "ocr_type": "easyocr"
+  },
+  {
+    "name": "gray_thresh",
+    "scale": 4,
+    "thresh": 180,
+    "ocr_type": "easyocr"
   }
 ]

@@ -139,7 +139,11 @@ def go_to_target_location(device, ign, target: Tuple[int, int], pattern_current_
             continue
 
 
-def do_check_if_buffed(device, ign, min_dmg_red=0, debug=False):
+def do_check_if_buffed(device, ign, min_dmg_red=0, debug=False, skip_validation_buff=False):
+    if skip_validation_buff:
+        console_log_with_ign(ign, "SKIP_VALIDATION_BUFF is enabled, skipping buff validation.")
+        return True
+
     console_log_with_ign(ign, "Opening allocation points...")
 
     import search_text_image
@@ -165,8 +169,9 @@ def do_check_if_buffed(device, ign, min_dmg_red=0, debug=False):
     time.sleep(1)
 
     while True:
-        img_stat = grab_raw_rgba(device, ign, debug)
-        res = search_text_image.get_text_stats(img_stat, region=(1478, 104, 1890, 973), debug=False)
+        img_stat = grab_raw_rgba(device, ign, False)
+        # res = search_text_image.get_text_stats(img_stat, region=(1478, 104, 1890, 973), debug=False)
+        res = search_text_image.get_search_text("check_if_buffed:dmg_red", img_stat, "Dmg Reduction", region=(1478, 104, 1890, 973), debug=False)
 
         lines = res.splitlines()
 
@@ -174,6 +179,7 @@ def do_check_if_buffed(device, ign, min_dmg_red=0, debug=False):
         for line in lines:
             if "dmg reduction" in line.lower():
                 # Find first number like 34.00
+                console_log_with_ign(ign, f"Found line with damage reduction info: '{line}'. Extracting value...")
                 match = re.search(r"(\d+(?:\.\d+)?)", line)
                 if match:
                     value = float(match.group(1))
@@ -272,8 +278,8 @@ def switch_channel(device: str, ign: str, channel: int, debug: bool = False) -> 
 
     # Log all detected text for debugging
     detected_texts = [text for text in data["text"] if text.strip()]
-    console_log_with_ign(ign, f"[DEBUG] All detected text in region: {detected_texts}")
-    console_log_with_ign(ign, f"[DEBUG] Looking for: '{search_text}'")
+    # console_log_with_ign(ign, f"[DEBUG] All detected text in region: {detected_texts}")
+    # console_log_with_ign(ign, f"[DEBUG] Looking for: '{search_text}'")
 
     # Define possible OCR misreadings for each channel
     channel_variations = {
@@ -326,19 +332,12 @@ def switch_channel(device: str, ign: str, channel: int, debug: bool = False) -> 
     raise RuntimeError(f"Could not find channel text '{search_text}' in region {region_to_scan}. Detected texts: {detected_texts}")
 
 
-def _teleport_to_map_location(device, ign, search_text, second_tap_coordinate, location_name, swipe_speed=300):
+def _teleport_to_map_location(device, ign, search_text, location_name, swipe_speed=200):
     search_texts = search_text if isinstance(search_text, list) else [search_text]
 
     do_clear_screen(device, ign=ign)
     do_open_map(device, ign=ign)
     time.sleep(1)
-
-    # swipe_down(device, (400, 340), (400, 630), 100, andPause=False)
-    # time.sleep(0.2)
-    # swipe_down(device, (400, 340), (400, 630), 100, andPause=False)
-    # time.sleep(0.2)
-    # swipe_down(device, (400, 340), (400, 630), 100, andPause=False)
-    # time.sleep(1)
 
     regionToScanText = (254, 184, 562, 748)
 
@@ -351,7 +350,7 @@ def _teleport_to_map_location(device, ign, search_text, second_tap_coordinate, l
         coordinate = None
         matched_text = None
         for text in search_texts:
-            coordinate = get_coordinate_of_text(device, text, ign, regionToScanText, debug=True)
+            coordinate = get_coordinate_of_text(device, text, ign, regionToScanText, debug=False)
             if coordinate:
                 matched_text = text
                 break
@@ -359,10 +358,10 @@ def _teleport_to_map_location(device, ign, search_text, second_tap_coordinate, l
             print(f"Found '{matched_text}' on the map at {coordinate}, tapping to teleport...")
             do_tap(device, coordinate, ign)
             time.sleep(3)
-            do_open_map(device, ign=ign)
-            time.sleep(1)
-            do_tap(device, second_tap_coordinate, ign)
-            time.sleep(3)
+            # do_open_map(device, ign=ign)
+            # time.sleep(1)
+            # do_tap(device, second_tap_coordinate, ign)
+            # time.sleep(3)
             do_clear_screen(device, ign=ign)
             break
         else:
@@ -373,17 +372,20 @@ def _teleport_to_map_location(device, ign, search_text, second_tap_coordinate, l
 def teleport_to_swamp_of_abyss(device, ign):
     _teleport_to_map_location(device, ign, [
         "Cross|Swamp"
-    ], (1352, 614), "corridor_of_agony")
+    ], (1352, 614), "swamp_of_abyss")
 
 def teleport_to_corridor_of_agony(device, ign):
-    _teleport_to_map_location(device, ign, "Corridor", (1352, 614), "corridor_of_agony")
+    _teleport_to_map_location(device, ign, "Corridor", "corridor_of_agony")
+    # _teleport_to_map_location(device, ign, "Corridor", (1352, 614), "corridor_of_agony")
 
 def teleport_to_endless_abyss(device, ign):
-    _teleport_to_map_location(device, ign, "Endless", (994, 782), "go_to_endless_abyss")
+    # _teleport_to_map_location(device, ign, "Endless", (994, 782), "go_to_endless_abyss")
+    _teleport_to_map_location(device, ign, "Endless", "go_to_endless_abyss")
 
 
 def teleport_to_divine(device, ign):
-    _teleport_to_map_location(device, ign, "Divine", (994, 782), "go_to_divine_realm")
+    _teleport_to_map_location(device, ign, "Divine", "go_to_divine_realm")
+    # _teleport_to_map_location(device, ign, "Divine", (994, 782), "go_to_divine_realm")
 
 def recycle_inventory(device, ign, is_free_player=False, bot_id=None, debug=False):
     console_log_with_ign(ign, "Recycling inventory...")

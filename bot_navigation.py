@@ -520,13 +520,17 @@ def debuff(device, ign, debug=False):
 
 def go_to_buffer(device, ign, debug=False):
 
+    if state.BOT_CONFIG.SKIP_BUFFER:
+        state.console_log("SKIP_BUFFER is enabled, skipping buffer.")
+        return
+
     if state.should_exit_bot(msg="go_to_buffer"):
         state.console_log(ign, "Exit detected. Exiting go_to_spot.")
         return
 
     adb_helpers.do_clear_screen(device, ign=ign)
 
-    if state.BOT_CONFIG.DEBUFF_BEFORE_BUFF:
+    if state.BOT_CONFIG.DEBUFF_BEFORE_BUFF and not state.BOT_CONFIG.SKIP_BUFFER:
         debuff(device, ign, debug=state.BOT_CONFIG.DEBUG)
         if state.should_exit_bot(msg="go_to_buffer 2"):
             state.console_log(ign, "Exit detected. Exiting go_to_spot.")
@@ -548,6 +552,10 @@ def go_to_buffer(device, ign, debug=False):
     if state.BOT_CONFIG.BUFFER_MAP == "CORRIDOR_OF_AGONY":
         state.console_log(ign, "Going to the buffer map Cooridor of Agony...")
         go_to_corridor_of_agony(device)
+        adb_helpers.do_open_map(device, ign=ign)
+        time.sleep(1)
+        adb_helpers.do_tap(device, (1352, 614), ign)
+        time.sleep(3)
 
     if state.BOT_CONFIG.BUFFER_MAP == "ENDLESS_ABYSS":
         state.console_log(ign, "Going to the buffer map Endless Abyss...")
@@ -587,6 +595,7 @@ def go_to_buffer(device, ign, debug=False):
         ign=ign,
         min_dmg_red=state.BOT_CONFIG.THRESHOLD_DMG_RED,
         debug=state.BOT_CONFIG.DEBUG,
+        skip_validation_buff=state.BOT_CONFIG.SKIP_VALIDATION_BUFF,
     )
     state.START_TIME_25M = time.time()
     time.sleep(0.5)
@@ -628,17 +637,16 @@ def parse_vip_map_from_id(map_id: str) -> int | None:
 
 
 def go_to_map(device: str, map_id: str):
-    if map_id == "7-01":
+    import inspect
+    import os
+    frame = inspect.stack()[1]
+    caller = f"{os.path.basename(frame.filename)}:{frame.lineno}"
+    state.console_log(f"[{caller}] - Navigating to map {map_id}...")
+    
+    if map_id in ("7-01", "7-03", "7-04"):
         adb_helpers.teleport_to_swamp_of_abyss(device, state.BOT_CONFIG.IGN)
         state.MAP_INFO = state.get_map_info(map_id)
-        return
-    if map_id == "7-03":
-        adb_helpers.teleport_to_swamp_of_abyss(device, state.BOT_CONFIG.IGN)
-        state.MAP_INFO = state.get_map_info(map_id)
-        return
-    if map_id == "7-04":
-        adb_helpers.teleport_to_swamp_of_abyss(device, state.BOT_CONFIG.IGN)
-        state.MAP_INFO = state.get_map_info(map_id)
+        state.console_log(f"Arrived at map {state.MAP_INFO.name}.")
         return
     if map_id == "7-02":
         go_to_swamp_of_darkness(device)
