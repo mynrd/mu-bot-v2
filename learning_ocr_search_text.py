@@ -31,7 +31,10 @@ def _get_engine(ocr_type):
 
         if ocr_type == "rapidocr":
             from rapidocr_onnxruntime import RapidOCR
-            engine = RapidOCR()
+            try:
+                engine = RapidOCR(det_use_cuda=True, rec_use_cuda=True, cls_use_cuda=True)
+            except Exception:
+                engine = RapidOCR()
             _ocr_engines[ocr_type] = engine
             return engine
     except Exception as e:

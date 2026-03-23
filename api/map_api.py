@@ -136,25 +136,31 @@ def create_boss(map_id: str):
 
 @map_bp.route("/<map_id>/bosses/<int:boss_id>", methods=["PUT"])
 def update_boss(map_id: str, boss_id: int):
-    """Update an existing boss."""
+    """Update an existing boss.
+
+    Only name, coordX, coordY, bossType, durationToRevive are updatable.
+    Only name, coordX, coordY, bossType, durationToRevive are updatable.
+    """
     data = request.get_json()
     if not data:
         return jsonify({"error": "Invalid JSON body"}), 400
 
-    locations = local_data.load_map_locations()
-    for loc in locations:
-        if loc.mapId == map_id:
-            for boss in loc.bosses:
-                if boss.id == boss_id:
-                    boss.name = data.get("name", boss.name)
-                    boss.coordX = int(data.get("coordX", boss.coordX))
-                    boss.coordY = int(data.get("coordY", boss.coordY))
-                    boss.bossType = int(data.get("bossType", boss.bossType))
-                    boss.durationToRevive = int(data.get("durationToRevive", boss.durationToRevive))
-                    local_data.save_map_locations(locations)
-                    return jsonify({"message": "Boss updated"})
-            return jsonify({"error": "Boss not found"}), 404
-    return jsonify({"error": "Map not found"}), 404
+    # Coerce numeric fields before passing to the atomic updater
+    coerced: dict = {}
+    if "name" in data:
+        coerced["name"] = data["name"]
+    if "coordX" in data:
+        coerced["coordX"] = int(data["coordX"])
+    if "coordY" in data:
+        coerced["coordY"] = int(data["coordY"])
+    if "bossType" in data:
+        coerced["bossType"] = int(data["bossType"])
+    if "durationToRevive" in data:
+        coerced["durationToRevive"] = int(data["durationToRevive"])
+
+    if local_data.update_boss_fields(map_id, boss_id, coerced):
+        return jsonify({"message": "Boss updated"})
+    return jsonify({"error": "Boss or map not found"}), 404
 
 
 @map_bp.route("/<map_id>/bosses/<int:boss_id>", methods=["DELETE"])

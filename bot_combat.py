@@ -58,9 +58,6 @@ def _include_for_channel(boss: BossDto, current_channel: int, now_utc: datetime)
     if not info:
         return True
 
-    if boss.engageBy == state.BOT_CONFIG.name:
-        return True
-
     ch_entries = [r for r in info if getattr(r, "channel", None) == current_channel]
 
     if not ch_entries:
@@ -82,8 +79,6 @@ def _log_recent_detected_bosses(map_info, current_channel: int, now_utc: datetim
             info = getattr(b, "bossChannelInfo", None) or []
             ch_entries = [r for r in info if getattr(r, "channel", None) == current_channel]
             if not ch_entries:
-                continue
-            if getattr(b, "engageBy", None) == state.BOT_CONFIG.name:
                 continue
             ages = [_age_minutes(now_utc, getattr(r, "detectedAt", None)) for r in ch_entries]
             if ages and all((m is not None and m <= 2.0) for m in ages):
@@ -386,12 +381,6 @@ def _engage_boss_and_update(
             )
 
             state.console_log(ign, f"isValidToKill: {isValidToKill}")
-            if state.CURRENT_TARGET:
-                try:
-                    local_data.update_boss_engaged(boss_id=state.CURRENT_TARGET.id, bot_name=state.BOT_CONFIG.name)
-                except Exception as e:
-                    state.console_log(ign, f"Failed to update boss engaged (non-fatal): {e}")
-
             if isValidToKill:
                 state.console_log(ign, f"Starting to kill the red boss at {target_boss}.")
                 shoud_exit = monitor_until_its_gone(
@@ -406,8 +395,6 @@ def _engage_boss_and_update(
                 names = ", ".join(state.CURRENT_FOUND_IGN_ON_BOSS) if state.CURRENT_FOUND_IGN_ON_BOSS else "(none)"
                 try:
                     local_data.add_attack_record(bot_id=state.BOT_CONFIG.id, boss_id=state.CURRENT_TARGET.id if state.CURRENT_TARGET else None, coin=0, coin_bound=0, start_attack=state._DATETIME_START_ATTACK, end_attack=datetime.now(), map_id=state.CURRENT_MAP_ID, found_attack_name=ign)
-                    if state.CURRENT_TARGET:
-                        local_data.update_boss_killed(boss_id=state.CURRENT_TARGET.id)
                 except Exception as e:
                     state.console_log(ign, f"Failed to save attack record (non-fatal): {e}")
 

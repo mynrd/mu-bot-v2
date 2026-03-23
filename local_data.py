@@ -48,9 +48,6 @@ class BossDto:
     bossType: int
     durationToRevive: int
     mapId: Optional[str]
-    lastKilled: Optional[datetime] = None
-    engageDate: Optional[datetime] = None
-    engageBy: Optional[str] = None
     bossChannelInfo: List[BossChannelInfoDto] | None = None
 
     @staticmethod
@@ -68,9 +65,6 @@ class BossDto:
             bossType=int(d.get("bossType") or 0),
             durationToRevive=int(d.get("durationToRevive") or 0),
             mapId=d.get("mapId"),
-            lastKilled=_parse_iso8601(d.get("lastKilled")),
-            engageDate=_parse_iso8601(d.get("engageDate")),
-            engageBy=d.get("engageBy"),
             bossChannelInfo=bci_list,
         )
 
@@ -169,12 +163,6 @@ def save_map_locations(locations: List[MapLocation]) -> None:
             "durationToRevive": b.durationToRevive,
             "mapId": b.mapId,
         }
-        if b.lastKilled:
-            d["lastKilled"] = _to_utc_iso(b.lastKilled)
-        if b.engageDate:
-            d["engageDate"] = _to_utc_iso(b.engageDate)
-        if b.engageBy:
-            d["engageBy"] = b.engageBy
         return d
 
     data = []
@@ -264,29 +252,30 @@ def save_coins(coins: float) -> None:
 # Boss state updates – update data/map_locations.json
 # ---------------------------------------------------------------------------
 
-def update_boss_killed(boss_id: int) -> None:
-    """Mark a boss as killed in the local map_locations.json."""
-    all_locations = load_map_locations()
-    for loc in all_locations:
-        for boss in loc.bosses:
-            if boss.id == boss_id:
-                boss.lastKilled = datetime.now()
-                boss.engageBy = None
-                boss.engageDate = None
-                save_map_locations(all_locations)
-                return
+def update_boss_fields(map_id: str, boss_id: int, fields: dict) -> bool:
+    """Atomically update specific fields of a boss in the JSON file.
 
+    Fields id, mapId, and bossChannelInfo are never modified.
+    """
+    _PROTECTED = {"id", "mapId", "bossChannelInfo"}
+    path = os.path.join(DATA_DIR, "map_locations.json")
 
-def update_boss_engaged(boss_id: int, bot_name: str) -> None:
-    """Mark a boss as engaged in the local map_locations.json."""
-    all_locations = load_map_locations()
-    for loc in all_locations:
-        for boss in loc.bosses:
-            if boss.id == boss_id:
-                boss.engageBy = bot_name
-                boss.engageDate = datetime.now()
-                save_map_locations(all_locations)
-                return
+    with _file_lock:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        for loc in data:
+            if loc.get("mapId") == map_id:
+                for boss in loc.get("bosses", []):
+                    if boss.get("id") == boss_id:
+                        for key, value in fields.items():
+                            if key not in _PROTECTED:
+                                boss[key] = value
+                        with open(path, "w", encoding="utf-8") as f:
+                            json.dump(data, f, indent=2)
+                        return True
+    return False
+
 
 
 def set_boss_found_dead(boss_id: int, channel: int) -> None:
