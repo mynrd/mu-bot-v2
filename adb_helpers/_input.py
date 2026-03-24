@@ -116,6 +116,7 @@ def do_tap(
     dry_run: bool = False,
     remarks: str = "",
     debug: bool = False,
+    no_logs: bool = False,
 ) -> int:
     if not (isinstance(coords, (tuple, list)) and len(coords) == 2):
         raise TypeError("coords must be a tuple or list of two numbers (x, y)")
@@ -123,10 +124,12 @@ def do_tap(
     import inspect, os
     frame = inspect.stack()[1]
     caller = f"{os.path.basename(frame.filename)}:{frame.lineno}"
-    console_log_with_ign(ign, f"[{caller}] - Tapping at {coords} (mode={mode})")
 
-    if remarks:
-        console_log_with_ign(ign, f"Remarks: {remarks}")
+    if not no_logs:
+        console_log_with_ign(ign, f"[{caller}] - Tapping at {coords} (mode={mode})")
+
+        if remarks:
+            console_log_with_ign(ign, f"Remarks: {remarks}")
 
     x, y = coords
     x_px, y_px = coords_to_pixels(x, y, width, height, mode=mode)
@@ -149,10 +152,10 @@ def do_clear_screen(device: str, dry_run: bool = False, click_x=False, ign: str 
     coords = [(35.36, 99.0754), (38.48, 98.7909)]
 
     if click_x:
-        do_tap(device, (87.5901, 15.1494), ign=ign, dry_run=dry_run, remarks="Initial tap to clear dialogs", debug=debug)
+        do_tap(device, (87.5901, 15.1494), ign=ign, dry_run=dry_run, remarks="Initial tap to clear dialogs", debug=debug, no_logs=True)
 
     for coord in coords:
         # perform two quick taps at each coordinate with the original pacing
         for _ in range(2):
-            do_tap(device, coord, ign=ign, dry_run=dry_run, debug=debug)
+            do_tap(device, coord, ign=ign, dry_run=dry_run, debug=debug, no_logs=True)
             time.sleep(0.1)
