@@ -8,6 +8,7 @@ import bot_state as state
 import local_data
 import player_locator_map
 from local_data import BossDto
+
 from bot_navigation import go_to_buffer, go_to_buffer_location, go_to_map
 from image_helpers import ImageLike
 from util import console_log_with_ign
@@ -199,6 +200,11 @@ def engage_and_check_isvalid(device, ign, skipNames: List[str] = [], ignoreName=
             console_log_with_ign(ign, "Exit flag detected in configuration. Exiting kill action.")
             return False
 
+        dead = adb_helpers.revive_if_dead(device, ign, debug=debug)
+        if dead:
+            console_log_with_ign(ign, "Character was dead and has been revived during engage validation.")
+            return False
+
         console_log_with_ign(ign, f"Kill action attempt {attempt} of {max_retries}...")
 
         # One attempt before the last, enable debug so the final retry has full logging
@@ -272,15 +278,13 @@ def engage_and_check_isvalid(device, ign, skipNames: List[str] = [], ignoreName=
 
 
 def monitor_until_its_gone(device, ign, interval=2, skipNames: List[str] = [], ignoreName=False, debug=False) -> None:
-    from bot_exceptions import RestartRaise
-
     while True:
         state.check_bot_paused()
 
         dead = adb_helpers.revive_if_dead(device, ign, debug=debug)
         if dead:
             console_log_with_ign(ign, "Character was dead and has been revived. Exiting monitor.")
-            raise RestartRaise("Character died during boss fight.")
+            return
 
         res = check_boss_active_killing(device, ign, debug=debug)
         if res is not None:
@@ -349,6 +353,11 @@ def _engage_boss_and_update(
         if state.should_exit_bot(msg="_engage_boss_and_update main loop"):
             state.console_log(ign, "Exit detected. Exiting go_to_spot.")
             return True, True, alive_all_type_bosses
+
+        dead = adb_helpers.revive_if_dead(device, ign, debug=debug)
+        if dead:
+            console_log_with_ign(ign, "Character was dead and has been revived while walking to boss.")
+            return False, None, alive_all_type_bosses
 
         if recalc_location_each_loop or initial_location is None:
             current_location = _find_current_location(device, ign)

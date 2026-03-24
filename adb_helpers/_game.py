@@ -53,12 +53,11 @@ def reopen_app(device, ign, package_name="com.tszz.gpsea", alliance_mode=False):
 
             result = search_text_image.get_search_text("reopen_app:start_game-" + str(alliance_mode), grab_raw_rgba(device, ign), region=(834, 762, 1078, 851), debug=False)
             if "start game".lower() in result.lower():
-
                 do_tap(device, (958, 805), ign=ign, remarks="Click Start Game")
                 console_log_with_ign(ign, "Found 'Start Game' text; proceeding.")
                 break
             console_log_with_ign(ign, "Did not find 'Start Game' text; retrying random click...")
-            time.sleep(5)
+            time.sleep(2)
             if cnt % 5 == 0:
                 console_log_with_ign(ign, "Too many retries; restarting app...")
                 close_app(device, package_name)
@@ -67,7 +66,7 @@ def reopen_app(device, ign, package_name="com.tszz.gpsea", alliance_mode=False):
 
         while True:
             result = search_text_image.get_search_text("reopen_app:startgame-" + str(alliance_mode), grab_raw_rgba(device, ign), region=(823, 952, 1097, 1041), debug=False)
-            if "startgame".lower() in result.lower():
+            if "startgame".lower() in result.lower() or "start game".lower() in result.lower():
                 do_tap(device, (955, 998), ign=ign, remarks="Click StartGame")
                 console_log_with_ign(ign, "Found 'StartGame' text; proceeding.")
                 break
