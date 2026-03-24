@@ -294,6 +294,18 @@
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Add Map
   </button>
+  <button class="btn btn-ghost" id="btnEditMap" style="display:none;" onclick="openEditMapModal()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Edit Map
+  </button>
+  <button class="btn btn-ghost" id="btnClone" style="display:none;" onclick="openCloneModal()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    Clone
+  </button>
+  <button class="btn btn-danger" id="btnDeleteMap" style="display:none;" onclick="deleteMap()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+    Delete Map
+  </button>
 </div>
 
 <div class="main">
@@ -356,7 +368,8 @@
 <!-- Map Modal -->
 <div class="modal-overlay" id="mapModal" onclick="if(event.target===this)closeMapModal()">
   <div class="modal">
-    <h3>Add Map</h3>
+    <h3 id="mapModalTitle">Add Map</h3>
+    <input type="hidden" id="editMapOriginalId">
     <div class="form-group">
       <label for="fMapId">Map ID</label>
       <input type="text" id="fMapId" placeholder="e.g. 7-03">
@@ -372,6 +385,29 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeMapModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveMap()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clone Modal -->
+<div class="modal-overlay" id="cloneModal" onclick="if(event.target===this)closeCloneModal()">
+  <div class="modal">
+    <h3>Clone Map</h3>
+    <div class="form-group">
+      <label for="fCloneMapId">Map ID</label>
+      <input type="text" id="fCloneMapId" placeholder="e.g. 7-04">
+    </div>
+    <div class="form-group">
+      <label for="fCloneName">Name</label>
+      <input type="text" id="fCloneName" placeholder="e.g. Swamp of Abyss (Clone)">
+    </div>
+    <div class="form-group">
+      <label for="fCloneTotalChannel">Total Channels</label>
+      <input type="number" id="fCloneTotalChannel" placeholder="1" min="1">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeCloneModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="cloneMap()">Save</button>
     </div>
   </div>
 </div>
@@ -410,10 +446,16 @@ document.getElementById('mapSelect').addEventListener('change', e => {
   if (currentMapId) {
     loadBosses(currentMapId);
     document.getElementById('btnAdd').style.display = '';
+    document.getElementById('btnEditMap').style.display = '';
+    document.getElementById('btnClone').style.display = '';
+    document.getElementById('btnDeleteMap').style.display = '';
     document.getElementById('cardTitle').textContent = `Bosses \u2014 ${e.target.options[e.target.selectedIndex].text.split('(')[0].trim()}`;
   } else {
     document.getElementById('bossTableWrap').innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><p>Select a map to view its bosses</p></div>';
     document.getElementById('btnAdd').style.display = 'none';
+    document.getElementById('btnEditMap').style.display = 'none';
+    document.getElementById('btnClone').style.display = 'none';
+    document.getElementById('btnDeleteMap').style.display = 'none';
     document.getElementById('cardTitle').textContent = 'Bosses';
   }
 });
@@ -524,9 +566,28 @@ async function deleteBoss(bossId) {
 
 // --- Map Modal ---
 function openMapModal() {
+  document.getElementById('mapModalTitle').textContent = 'Add Map';
+  document.getElementById('editMapOriginalId').value = '';
   document.getElementById('fMapId').value = '';
   document.getElementById('fMapName').value = '';
   document.getElementById('fTotalChannel').value = '';
+  document.getElementById('mapModal').classList.add('active');
+}
+
+function openEditMapModal() {
+  if (!currentMapId) return;
+  const sel = document.getElementById('mapSelect');
+  const opt = sel.options[sel.selectedIndex];
+  const mapName = opt.textContent.split('(')[0].trim();
+  document.getElementById('mapModalTitle').textContent = 'Edit Map';
+  document.getElementById('editMapOriginalId').value = currentMapId;
+  document.getElementById('fMapId').value = currentMapId;
+  document.getElementById('fMapName').value = mapName;
+  // Fetch current totalChannel from API
+  fetch(`${API}/api/maps`).then(r => r.json()).then(maps => {
+    const m = maps.find(x => x.mapId === currentMapId);
+    if (m) document.getElementById('fTotalChannel').value = m.totalChannel;
+  });
   document.getElementById('mapModal').classList.add('active');
 }
 
@@ -535,6 +596,7 @@ function closeMapModal() {
 }
 
 async function saveMap() {
+  const originalId = document.getElementById('editMapOriginalId').value;
   const body = {
     mapId: document.getElementById('fMapId').value.trim(),
     name: document.getElementById('fMapName').value.trim(),
@@ -544,18 +606,98 @@ async function saveMap() {
     alert('Map ID and Name are required');
     return;
   }
-  const res = await fetch(`${API}/api/maps`, {
+
+  if (originalId) {
+    // Edit mode
+    const res = await fetch(`${API}/api/maps/${originalId}`, {
+      method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.error || 'Failed to update map');
+      return;
+    }
+    const result = await res.json();
+    closeMapModal();
+    toast('Map updated');
+    currentMapId = result.mapId;
+    await loadMaps();
+    document.getElementById('mapSelect').value = currentMapId;
+    document.getElementById('mapSelect').dispatchEvent(new Event('change'));
+  } else {
+    // Add mode
+    const res = await fetch(`${API}/api/maps`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      alert(err.error || 'Failed to create map');
+      return;
+    }
+    closeMapModal();
+    toast('Map created');
+    await loadMaps();
+    document.getElementById('mapSelect').value = body.mapId;
+    document.getElementById('mapSelect').dispatchEvent(new Event('change'));
+  }
+}
+
+// --- Delete Map ---
+async function deleteMap() {
+  if (!currentMapId) return;
+  if (!confirm('Delete this map and all its bosses?')) return;
+  const res = await fetch(`${API}/api/maps/${currentMapId}`, { method: 'DELETE' });
+  if (!res.ok) {
+    const err = await res.json();
+    alert(err.error || 'Failed to delete map');
+    return;
+  }
+  toast('Map deleted');
+  currentMapId = null;
+  document.getElementById('btnAdd').style.display = 'none';
+  document.getElementById('btnEditMap').style.display = 'none';
+  document.getElementById('btnClone').style.display = 'none';
+  document.getElementById('btnDeleteMap').style.display = 'none';
+  document.getElementById('bossTableWrap').innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><p>Select a map to view its bosses</p></div>';
+  document.getElementById('cardTitle').textContent = 'Bosses';
+  await loadMaps();
+}
+
+// --- Clone Modal ---
+function openCloneModal() {
+  document.getElementById('fCloneMapId').value = '';
+  document.getElementById('fCloneName').value = '';
+  document.getElementById('fCloneTotalChannel').value = '';
+  document.getElementById('cloneModal').classList.add('active');
+}
+
+function closeCloneModal() {
+  document.getElementById('cloneModal').classList.remove('active');
+}
+
+async function cloneMap() {
+  if (!currentMapId) return;
+  const body = {
+    mapId: document.getElementById('fCloneMapId').value.trim(),
+    name: document.getElementById('fCloneName').value.trim(),
+    totalChannel: parseInt(document.getElementById('fCloneTotalChannel').value) || 1,
+  };
+  if (!body.mapId || !body.name) {
+    alert('Map ID and Name are required');
+    return;
+  }
+  const res = await fetch(`${API}/api/maps/${currentMapId}/clone`, {
     method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body),
   });
   if (!res.ok) {
     const err = await res.json();
-    alert(err.error || 'Failed to create map');
+    alert(err.error || 'Failed to clone map');
     return;
   }
-  closeMapModal();
-  toast('Map created');
+  closeCloneModal();
+  toast('Map cloned');
   await loadMaps();
-  // Auto-select the new map
+  // Auto-select the cloned map
   document.getElementById('mapSelect').value = body.mapId;
   document.getElementById('mapSelect').dispatchEvent(new Event('change'));
 }

@@ -73,6 +73,124 @@ def create_map():
     return jsonify({"id": new_id, "mapId": map_id, "message": "Map created"}), 201
 
 
+@map_bp.route("/<map_id>", methods=["PUT"])
+def update_map(map_id: str):
+    """Update a map's mapId, name, or totalChannel."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid JSON body"}), 400
+
+    locations = local_data.load_map_locations()
+    target = None
+    for loc in locations:
+        if loc.mapId == map_id:
+            target = loc
+            break
+    if target is None:
+        return jsonify({"error": "Map not found"}), 404
+
+    new_map_id = (data.get("mapId") or "").strip()
+    new_name = (data.get("name") or "").strip()
+    new_total_channel = data.get("totalChannel")
+
+    # If mapId is changing, check for duplicates
+    if new_map_id and new_map_id != map_id:
+        for loc in locations:
+            if loc.mapId == new_map_id:
+                return jsonify({"error": f"Map '{new_map_id}' already exists"}), 409
+        target.mapId = new_map_id
+        # Update mapId on all bosses too
+        for b in target.bosses:
+            b.mapId = new_map_id
+
+    if new_name:
+        target.name = new_name
+    if new_total_channel is not None:
+        target.totalChannel = int(new_total_channel)
+
+    local_data.save_map_locations(locations)
+    return jsonify({"mapId": target.mapId, "message": "Map updated"})
+
+
+@map_bp.route("/<map_id>", methods=["DELETE"])
+def delete_map(map_id: str):
+    """Delete a map and all its bosses."""
+    locations = local_data.load_map_locations()
+    original_len = len(locations)
+    locations = [loc for loc in locations if loc.mapId != map_id]
+    if len(locations) == original_len:
+        return jsonify({"error": "Map not found"}), 404
+    local_data.save_map_locations(locations)
+    return jsonify({"message": "Map deleted"})
+
+
+@map_bp.route("/<map_id>/clone", methods=["POST"])
+def clone_map(map_id: str):
+    """Clone a map with new mapId, name, and totalChannel. Bosses are copied."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid JSON body"}), 400
+
+    new_map_id = (data.get("mapId") or "").strip()
+    new_name = (data.get("name") or "").strip()
+    new_total_channel = int(data.get("totalChannel", 0))
+
+    if not new_map_id or not new_name:
+        return jsonify({"error": "mapId and name are required"}), 400
+
+    locations = local_data.load_map_locations()
+
+    # Find source map
+    source = None
+    for loc in locations:
+        if loc.mapId == map_id:
+            source = loc
+            break
+    if source is None:
+        return jsonify({"error": "Source map not found"}), 404
+
+    # Check for duplicate mapId
+    for loc in locations:
+        if loc.mapId == new_map_id:
+            return jsonify({"error": f"Map '{new_map_id}' already exists"}), 409
+
+    # Generate new map ID
+    max_id = max((loc.id for loc in locations), default=0)
+    new_id = max_id + 1
+
+    # Generate new boss IDs
+    max_boss_id = 0
+    for loc in locations:
+        for b in loc.bosses:
+            if b.id > max_boss_id:
+                max_boss_id = b.id
+
+    cloned_bosses = []
+    for b in source.bosses:
+        max_boss_id += 1
+        cloned_bosses.append(local_data.BossDto(
+            id=max_boss_id,
+            name=b.name,
+            coordX=b.coordX,
+            coordY=b.coordY,
+            bossType=b.bossType,
+            durationToRevive=b.durationToRevive,
+            mapId=new_map_id,
+        ))
+
+    new_map = local_data.MapLocation(
+        id=new_id,
+        mapId=new_map_id,
+        name=new_name,
+        totalChannel=new_total_channel,
+        bosses=cloned_bosses,
+    )
+    locations.append(new_map)
+    local_data.save_map_locations(locations)
+
+    return jsonify({"id": new_id, "mapId": new_map_id, "message": "Map cloned"}), 201
+
+
 @map_bp.route("/<map_id>/bosses", methods=["GET"])
 def get_bosses(map_id: str):
     """Return all bosses for a given map."""

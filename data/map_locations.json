@@ -545,10 +545,7 @@
         "coordY": 800,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "7-04",
-        "lastKilled": "2026-03-17T14:15:30.436135Z",
-        "engageDate": "2026-03-23T07:26:41.053720Z",
-        "engageBy": "local"
+        "mapId": "7-04"
       },
       {
         "id": 79,
@@ -557,10 +554,7 @@
         "coordY": 792,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "7-04",
-        "lastKilled": "2026-03-17T14:18:17.688656Z",
-        "engageDate": "2026-03-23T06:57:30.736271Z",
-        "engageBy": "local"
+        "mapId": "7-04"
       }
     ]
   },
@@ -685,8 +679,7 @@
         "coordY": 625,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC2-01",
-        "lastKilled": "2026-03-18T18:44:25.959139Z"
+        "mapId": "SANC2-01"
       },
       {
         "id": 93,
@@ -695,8 +688,7 @@
         "coordY": 572,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC2-01",
-        "lastKilled": "2026-03-18T18:46:34.587755Z"
+        "mapId": "SANC2-01"
       },
       {
         "id": 94,
@@ -1106,8 +1098,7 @@
         "coordY": 691,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02",
-        "lastKilled": "2026-03-23T11:10:08.708628Z"
+        "mapId": "SANC5-G-02"
       },
       {
         "id": 136,
@@ -1116,10 +1107,7 @@
         "coordY": 656,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02",
-        "lastKilled": "2026-03-23T11:07:13.749899Z",
-        "engageDate": "2026-03-23T11:10:28.934734Z",
-        "engageBy": "local"
+        "mapId": "SANC5-G-02"
       },
       {
         "id": 137,
@@ -1128,8 +1116,7 @@
         "coordY": 549,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02",
-        "lastKilled": "2026-03-23T11:00:09.115763Z"
+        "mapId": "SANC5-G-02"
       },
       {
         "id": 138,
@@ -1138,8 +1125,7 @@
         "coordY": 636,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02",
-        "lastKilled": "2026-03-23T11:08:41.747736Z"
+        "mapId": "SANC5-G-02"
       }
     ]
   },
@@ -1537,8 +1523,7 @@
         "coordY": 691,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02",
-        "lastKilled": "2026-03-23T11:10:08.708628Z"
+        "mapId": "SANC5-G-02"
       },
       {
         "id": 136,
@@ -1547,10 +1532,7 @@
         "coordY": 656,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02",
-        "lastKilled": "2026-03-23T11:07:13.749899Z",
-        "engageDate": "2026-03-23T11:10:28.934734Z",
-        "engageBy": "local"
+        "mapId": "SANC5-G-02"
       },
       {
         "id": 137,
@@ -1559,8 +1541,7 @@
         "coordY": 549,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02",
-        "lastKilled": "2026-03-23T11:00:09.115763Z"
+        "mapId": "SANC5-G-02"
       },
       {
         "id": 138,
@@ -1569,8 +1550,402 @@
         "coordY": 636,
         "bossType": 2,
         "durationToRevive": 0,
-        "mapId": "SANC5-G-02",
-        "lastKilled": "2026-03-23T11:08:41.747736Z"
+        "mapId": "SANC5-G-02"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "mapId": "SANC6-ALL",
+    "name": "Sanctuary 6 - All Boss",
+    "totalChannel": 4,
+    "bosses": [
+      {
+        "id": 169,
+        "name": "Sanctuary VIP 2 - Red - 01",
+        "coordX": 1300,
+        "coordY": 525,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 170,
+        "name": "Sanctuary VIP 2 - Red - 02",
+        "coordX": 1163,
+        "coordY": 504,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 171,
+        "name": "Sanctuary VIP 2 - Red - 03",
+        "coordX": 1140,
+        "coordY": 367,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 172,
+        "name": "Sanctuary VIP 2 - Red - 04",
+        "coordX": 1004,
+        "coordY": 345,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 173,
+        "name": "Sanctuary VIP 2 - Red - 05",
+        "coordX": 1004,
+        "coordY": 452,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 174,
+        "name": "Sanctuary VIP 2 - Red - 06",
+        "coordX": 1220,
+        "coordY": 668,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 175,
+        "name": "Sanctuary VIP 2 - Red - 07",
+        "coordX": 1216,
+        "coordY": 769,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 176,
+        "name": "Sanctuary VIP 2 - Red - 08",
+        "coordX": 1078,
+        "coordY": 748,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 177,
+        "name": "Sanctuary VIP 2 - Red - 09",
+        "coordX": 1057,
+        "coordY": 610,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 178,
+        "name": "Sanctuary VIP 2 - Red - 10",
+        "coordX": 919,
+        "coordY": 590,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 179,
+        "name": "Sanctuary VIP 2 - Red - 11",
+        "coordX": 898,
+        "coordY": 450,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 180,
+        "name": "Sanctuary VIP 2 - Red - 12",
+        "coordX": 1323,
+        "coordY": 660,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 181,
+        "name": "Sanctuary VIP 2 - Golden - 01",
+        "coordX": 1405,
+        "coordY": 625,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 182,
+        "name": "Sanctuary VIP 2 - Golden - 02",
+        "coordX": 1353,
+        "coordY": 572,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 183,
+        "name": "Sanctuary VIP 2 - Golden - 03",
+        "coordX": 1246,
+        "coordY": 467,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 184,
+        "name": "Sanctuary VIP 2 - Golden - 04",
+        "coordX": 1268,
+        "coordY": 603,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 185,
+        "name": "Sanctuary VIP 2 - Golden - 05",
+        "coordX": 1216,
+        "coordY": 550,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 186,
+        "name": "Sanctuary VIP 2 - Golden - 06",
+        "coordX": 1193,
+        "coordY": 413,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 187,
+        "name": "Sanctuary VIP 2 - Golden - 07",
+        "coordX": 1108,
+        "coordY": 444,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 188,
+        "name": "Sanctuary VIP 2 - Golden - 08",
+        "coordX": 1056,
+        "coordY": 391,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 189,
+        "name": "Sanctuary VIP 2 - Golden - 09",
+        "coordX": 1087,
+        "coordY": 308,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 190,
+        "name": "Sanctuary VIP 2 - Golden - 10",
+        "coordX": 1034,
+        "coordY": 254,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 191,
+        "name": "Sanctuary VIP 2 - Golden - 11",
+        "coordX": 925,
+        "coordY": 366,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 192,
+        "name": "Sanctuary VIP 2 - Golden - 12",
+        "coordX": 811,
+        "coordY": 478,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 193,
+        "name": "Sanctuary VIP 2 - Golden - 13",
+        "coordX": 865,
+        "coordY": 532,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 194,
+        "name": "Sanctuary VIP 2 - Golden - 14",
+        "coordX": 971,
+        "coordY": 637,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 195,
+        "name": "Sanctuary VIP 2 - Golden - 15",
+        "coordX": 1024,
+        "coordY": 691,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 196,
+        "name": "Sanctuary VIP 2 - Golden - 16",
+        "coordX": 1130,
+        "coordY": 796,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 197,
+        "name": "Sanctuary VIP 2 - Golden - 17",
+        "coordX": 1183,
+        "coordY": 849,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 198,
+        "name": "Sanctuary VIP 2 - Golden - 18",
+        "coordX": 1162,
+        "coordY": 711,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 199,
+        "name": "Sanctuary VIP 2 - Golden - 19",
+        "coordX": 1110,
+        "coordY": 657,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 200,
+        "name": "Sanctuary VIP 2 - Golden - 20",
+        "coordX": 1004,
+        "coordY": 551,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 201,
+        "name": "Sanctuary VIP 2 - Golden - 21",
+        "coordX": 950,
+        "coordY": 499,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 202,
+        "name": "Sanctuary VIP 2 - Golden - 22",
+        "coordX": 994,
+        "coordY": 873,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 203,
+        "name": "Sanctuary VIP 2 - Golden - 23",
+        "coordX": 943,
+        "coordY": 820,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 204,
+        "name": "Sanctuary VIP 2 - Golden - 24",
+        "coordX": 889,
+        "coordY": 766,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 205,
+        "name": "Sanctuary VIP 2 - Golden - 25",
+        "coordX": 835,
+        "coordY": 714,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 206,
+        "name": "Sanctuary VIP 2 - Golden - 26",
+        "coordX": 729,
+        "coordY": 607,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 207,
+        "name": "Sanctuary VIP 2 - Golden - 27",
+        "coordX": 1135,
+        "coordY": 578,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 208,
+        "name": "Sanctuary VIP 2 - Golden - 28",
+        "coordX": 1086,
+        "coordY": 529,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 209,
+        "name": "Sanctuary VIP 2 - Golden - 29",
+        "coordX": 1297,
+        "coordY": 739,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 210,
+        "name": "Sanctuary VIP 2 - Golden - 30",
+        "coordX": 783,
+        "coordY": 661,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
+      },
+      {
+        "id": 211,
+        "name": "Sanctuary VIP 2 - Golden - 31",
+        "coordX": 817,
+        "coordY": 837,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC6-ALL"
       }
     ]
   }
