@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map Preview</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --surface: #131825;
+    --surface2: #1a2035;
+    --border: rgba(255,255,255,0.06);
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --red: #ef4444;
+    --red-soft: rgba(239,68,68,0.12);
+    --gold: #eab308;
+    --gold-soft: rgba(234,179,8,0.12);
+    --green: #22c55e;
+    --green-soft: rgba(34,197,94,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .topbar .sep { width: 1px; height: 24px; background: var(--border); }
+  .topbar a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .topbar a:hover { color: var(--text); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+  .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: rgba(255,255,255,0.12); }
+  .btn-success { background: var(--green); color: #fff; }
+  .btn-success:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
+  .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red-soft); }
+  .btn-danger:hover { background: var(--red-soft); }
+
+  .main { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Upload area */
+  .upload-area {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 60px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+  }
+  .upload-area:hover, .upload-area.dragover {
+    border-color: var(--accent);
+    background: rgba(99,102,241,0.04);
+  }
+  .upload-area svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3; }
+  .upload-area p { color: var(--text-muted); font-size: 0.9rem; }
+  .upload-area .hint { font-size: 0.75rem; margin-top: 8px; opacity: 0.5; }
+
+  /* Map viewport (clips zoom) */
+  .map-viewport {
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+  }
+
+  /* Map container */
+  .map-container {
+    position: relative;
+    display: inline-block;
+    transform-origin: 0 0;
+    cursor: crosshair;
+  }
+  .map-container img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Boss dots */
+  .boss-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    transition: box-shadow 0.15s;
+    z-index: 10;
+    border: 1.5px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 8px rgba(0,0,0,0.5);
+  }
+  .boss-dot:hover {
+    z-index: 20;
+    box-shadow: 0 0 16px rgba(0,0,0,0.7);
+  }
+  .boss-dot.dragging {
+    cursor: grabbing;
+    z-index: 30;
+    transform: translate(-50%, -50%) scale(1.4);
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+  }
+  .boss-dot.red { background: var(--red); color: var(--red); }
+  .boss-dot.golden { background: var(--gold); color: var(--gold); }
+  .boss-dot.new-boss { border-style: dashed; }
+
+  /* Pulse animation */
+  .boss-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    opacity: 0;
+    animation: pulse 2s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+
+  /* Boss info popup */
+  .boss-popup {
+    position: absolute;
+    z-index: 100;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    min-width: 220px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    pointer-events: auto;
+    animation: popIn 0.15s ease;
+  }
+  @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+  .boss-popup .popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .boss-popup .popup-header h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  .boss-popup .popup-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .boss-popup .popup-close:hover { color: var(--text); }
+
+  .boss-popup .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.8rem;
+  }
+  .boss-popup .info-row .label {
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+  }
+  .boss-popup .info-row .value {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+  }
+  .boss-popup .popup-actions {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 6px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .badge-red { background: var(--red-soft); color: var(--red); }
+  .badge-golden { background: var(--gold-soft); color: var(--gold); }
+  .badge::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+  }
+  .legend-dot.red { background: var(--red); }
+  .legend-dot.golden { background: var(--gold); }
+
+  /* Controls bar */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    flex-wrap: wrap;
+  }
+  .controls .map-name {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .boss-count {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: var(--surface2);
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+
+  /* Zoom indicator */
+  .zoom-badge {
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    color: var(--text-muted);
+    background: var(--surface2);
+    padding: 4px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.15s;
+  }
+  .zoom-badge:hover { color: var(--text); border-color: rgba(255,255,255,0.12); }
+
+  /* Changes indicator */
+  .changes-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--gold-soft);
+    color: var(--gold);
+    padding: 4px 12px;
+    border-radius: 999px;
+    display: none;
+  }
+  .changes-badge.visible { display: inline-flex; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.15s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 420px;
+    max-width: 95vw;
+    animation: slideUp 0.2s ease;
+  }
+  .modal h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 0.9rem;
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s;
+    z-index: 300;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { background: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Map Preview</h1>
+  <div class="sep"></div>
+  <a href="/">Map Manager</a>
+  <div class="sep"></div>
+  <a href="/config">Bot Config</a>
+  <div class="sep"></div>
+  <span id="mapInfo" style="color:var(--text);font-size:0.85rem;font-weight:600;"></span>
+  <div style="flex:1;"></div>
+  <span class="changes-badge" id="changesBadge"></span>
+  <button class="btn btn-success" id="btnApply" style="display:none;" onclick="applyChanges()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    Apply Changes
+  </button>
+</div>
+
+<div class="main">
+  <div class="controls" id="controls" style="display:none;">
+    <span class="map-name" id="mapName"></span>
+    <span class="boss-count" id="bossCount"></span>
+    <div style="flex:1;"></div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot red"></div> Red Boss</div>
+      <div class="legend-item"><div class="legend-dot golden"></div> Golden Boss</div>
+    </div>
+    <span class="zoom-badge" id="zoomBadge" onclick="resetZoom()" title="Click to reset zoom">100%</span>
+    <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Change Image
+    </button>
+  </div>
+
+  <!-- Upload area -->
+  <div id="uploadArea" class="upload-area">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+      <circle cx="8.5" cy="8.5" r="1.5"/>
+      <polyline points="21 15 16 10 5 21"/>
+    </svg>
+    <p>Drop a map image here or click to upload</p>
+    <p class="hint">Click on the image to add bosses. Drag dots to reposition.</p>
+  </div>
+  <input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+  <!-- Map display -->
+  <div id="mapDisplay" style="display:none;">
+    <div class="map-viewport" id="mapViewport">
+      <div class="map-container" id="mapContainer">
+        <img id="mapImage" src="" alt="Map">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Boss Modal -->
+<div class="modal-overlay" id="addBossModal" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <h3>Add Boss</h3>
+    <div class="form-group">
+      <label for="fBossName">Name</label>
+      <input type="text" id="fBossName" placeholder="e.g. Swamp of Abyss - Red - 05">
+    </div>
+    <div class="form-group">
+      <label for="fBossType">Boss Type</label>
+      <select id="fBossType">
+        <option value="1">Red Boss</option>
+        <option value="2">Golden Boss</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fCoordX">Coord X</label>
+        <input type="number" id="fCoordX" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label for="fCoordY">Coord Y</label>
+        <input type="number" id="fCoordY" placeholder="0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAddModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddBoss()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+const mapId = window.location.pathname.split('/').pop();
+let bosses = [];
+let imageNaturalWidth = 0;
+let imageNaturalHeight = 0;
+let activePopup = null;
+
+// Change tracking
+let newBosses = [];       // bosses to create (no id yet)
+let movedBosses = {};     // { bossId: { coordX, coordY } }
+let deletedBossIds = [];  // boss ids to delete
+let pendingClickCoord = null; // { x, y } for add boss modal
+
+// Zoom & pan state
+let zoom = 1;
+let panX = 0;
+let panY = 0;
+
+function updateTransform() {
+  const container = document.getElementById('mapContainer');
+  container.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+  document.getElementById('zoomBadge').textContent = Math.round(zoom * 100) + '%';
+}
+
+function clampPan() {
+  const viewport = document.getElementById('mapViewport');
+  const container = document.getElementById('mapContainer');
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  const cw = container.clientWidth * zoom;
+  const ch = container.clientHeight * zoom;
+
+  if (cw <= vw) panX = 0;
+  else panX = Math.min(0, Math.max(vw - cw, panX));
+
+  if (ch <= vh) panY = 0;
+  else panY = Math.min(0, Math.max(vh - ch, panY));
+}
+
+function resetZoom() {
+  zoom = 1;
+  panX = 0;
+  panY = 0;
+  updateTransform();
+}
+
+// Convert screen coordinates to container-local coordinates (accounting for zoom/pan)
+function screenToContainer(clientX, clientY) {
+  const viewport = document.getElementById('mapViewport');
+  const rect = viewport.getBoundingClientRect();
+  return {
+    x: (clientX - rect.left - panX) / zoom,
+    y: (clientY - rect.top - panY) / zoom,
+  };
+}
+
+function toast(msg, isError) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = isError ? 'toast error' : 'toast';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+function updateChangesUI() {
+  const count = newBosses.length + Object.keys(movedBosses).length + deletedBossIds.length;
+  const badge = document.getElementById('changesBadge');
+  const btn = document.getElementById('btnApply');
+  if (count > 0) {
+    badge.textContent = `${count} pending change${count > 1 ? 's' : ''}`;
+    badge.classList.add('visible');
+    btn.style.display = '';
+  } else {
+    badge.classList.remove('visible');
+    btn.style.display = 'none';
+  }
+}
+
+function updateBossCount() {
+  const total = bosses.length + newBosses.length - deletedBossIds.length;
+  const existingRed = bosses.filter(b => b.bossType === 1 && !deletedBossIds.includes(b.id)).length;
+  const existingGolden = bosses.filter(b => b.bossType === 2 && !deletedBossIds.includes(b.id)).length;
+  const newRed = newBosses.filter(b => b.bossType === 1).length;
+  const newGolden = newBosses.filter(b => b.bossType === 2).length;
+  const red = existingRed + newRed;
+  const golden = existingGolden + newGolden;
+  document.getElementById('bossCount').textContent = `${total} bosses (${red} red, ${golden} golden)`;
+}
+
+// --- Init ---
+async function init() {
+  const [mapsRes, bossesRes] = await Promise.all([
+    fetch(`${API}/api/maps`),
+    fetch(`${API}/api/maps/${mapId}/bosses`),
+  ]);
+  const maps = await mapsRes.json();
+  bosses = await bossesRes.json();
+
+  const map = maps.find(m => m.mapId === mapId);
+  if (map) {
+    document.getElementById('mapInfo').textContent = `${map.name} (${map.mapId})`;
+    document.getElementById('mapName').textContent = map.name;
+    document.title = `Preview — ${map.name}`;
+  }
+
+  updateBossCount();
+}
+
+// --- File upload ---
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+
+uploadArea.addEventListener('click', () => fileInput.click());
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) loadImage(file);
+});
+fileInput.addEventListener('change', e => { if (e.target.files[0]) loadImage(e.target.files[0]); });
+
+function loadImage(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('mapImage');
+    img.onload = () => {
+      imageNaturalWidth = img.naturalWidth;
+      imageNaturalHeight = img.naturalHeight;
+      document.getElementById('uploadArea').style.display = 'none';
+      document.getElementById('mapDisplay').style.display = '';
+      document.getElementById('controls').style.display = '';
+      resetZoom();
+      plotBosses();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// --- Plot bosses ---
+function plotBosses() {
+  document.querySelectorAll('.boss-dot').forEach(el => el.remove());
+  closePopup();
+
+  const container = document.getElementById('mapContainer');
+  const img = document.getElementById('mapImage');
+  const displayWidth = img.clientWidth;
+  const displayHeight = img.clientHeight;
+  const scaleX = displayWidth / imageNaturalWidth;
+  const scaleY = displayHeight / imageNaturalHeight;
+
+  // Plot existing bosses (skip deleted)
+  bosses.forEach(boss => {
+    if (deletedBossIds.includes(boss.id)) return;
+    const cx = movedBosses[boss.id] ? movedBosses[boss.id].coordX : boss.coordX;
+    const cy = movedBosses[boss.id] ? movedBosses[boss.id].coordY : boss.coordY;
+    const dot = createDot(cx, cy, boss.bossType, scaleX, scaleY, false);
+    dot.dataset.bossId = boss.id;
+    dot.addEventListener('click', e => { e.stopPropagation(); showPopup(boss, dot); });
+    setupDrag(dot, boss, null, scaleX, scaleY);
+    container.appendChild(dot);
+  });
+
+  // Plot new bosses
+  newBosses.forEach((boss, idx) => {
+    const dot = createDot(boss.coordX, boss.coordY, boss.bossType, scaleX, scaleY, true);
+    dot.dataset.newIdx = idx;
+    dot.addEventListener('click', e => { e.stopPropagation(); showNewPopup(boss, idx, dot); });
+    setupDrag(dot, null, idx, scaleX, scaleY);
+    container.appendChild(dot);
+  });
+}
+
+function createDot(cx, cy, bossType, scaleX, scaleY, isNew) {
+  const dot = document.createElement('div');
+  dot.className = `boss-dot ${bossType === 2 ? 'golden' : 'red'}${isNew ? ' new-boss' : ''}`;
+  dot.style.left = (cx * scaleX) + 'px';
+  dot.style.top = (cy * scaleY) + 'px';
+  return dot;
+}
+
+// --- Drag to move ---
+function setupDrag(dot, existingBoss, newIdx, scaleX, scaleY) {
+  let isDragging = false;
+  let hasMoved = false;
+  let startX, startY;
+
+  dot.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    isDragging = true;
+    hasMoved = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    dot.classList.add('dragging');
+    closePopup();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
+    if (!hasMoved) return;
+
+    const img = document.getElementById('mapImage');
+    const pos = screenToContainer(e.clientX, e.clientY);
+
+    // Clamp within container
+    const newLeft = Math.max(0, Math.min(pos.x, img.clientWidth));
+    const newTop = Math.max(0, Math.min(pos.y, img.clientHeight));
+
+    dot.style.left = newLeft + 'px';
+    dot.style.top = newTop + 'px';
+  });
+
+  document.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    dot.classList.remove('dragging');
+
+    if (!hasMoved) return;
+
+    const img = document.getElementById('mapImage');
+    const pos = screenToContainer(e.clientX, e.clientY);
+    const px = Math.max(0, Math.min(pos.x, img.clientWidth));
+    const py = Math.max(0, Math.min(pos.y, img.clientHeight));
+
+    // Convert display pixels back to game coordinates
+    const gameX = Math.round(px / scaleX);
+    const gameY = Math.round(py / scaleY);
+
+    if (existingBoss) {
+      movedBosses[existingBoss.id] = { coordX: gameX, coordY: gameY };
+    } else if (newIdx !== null) {
+      newBosses[newIdx].coordX = gameX;
+      newBosses[newIdx].coordY = gameY;
+    }
+    updateChangesUI();
+  });
+}
+
+// --- Click on map to add boss ---
+document.getElementById('mapContainer').addEventListener('click', e => {
+  if (e.target.closest('.boss-dot') || e.target.closest('.boss-popup')) return;
+
+  const img = document.getElementById('mapImage');
+  const pos = screenToContainer(e.clientX, e.clientY);
+  const scaleX = img.clientWidth / imageNaturalWidth;
+  const scaleY = img.clientHeight / imageNaturalHeight;
+
+  const gameX = Math.round(pos.x / scaleX);
+  const gameY = Math.round(pos.y / scaleY);
+
+  pendingClickCoord = { x: gameX, y: gameY };
+  document.getElementById('fBossName').value = '';
+  document.getElementById('fBossType').value = '1';
+  document.getElementById('fCoordX').value = gameX;
+  document.getElementById('fCoordY').value = gameY;
+  document.getElementById('addBossModal').classList.add('active');
+  document.getElementById('fBossName').focus();
+});
+
+function closeAddModal() {
+  document.getElementById('addBossModal').classList.remove('active');
+  pendingClickCoord = null;
+}
+
+function confirmAddBoss() {
+  const name = document.getElementById('fBossName').value.trim();
+  if (!name) { document.getElementById('fBossName').focus(); return; }
+  const bossType = parseInt(document.getElementById('fBossType').value);
+  const coordX = parseInt(document.getElementById('fCoordX').value) || 0;
+  const coordY = parseInt(document.getElementById('fCoordY').value) || 0;
+
+  newBosses.push({ name, bossType, coordX, coordY, durationToRevive: 0 });
+  closeAddModal();
+  updateChangesUI();
+  updateBossCount();
+  plotBosses();
+  toast('Boss added (pending)');
+}
+
+// --- Popups ---
+function showPopup(boss, dotEl) {
+  closePopup();
+  const container = document.getElementById('mapContainer');
+  const popup = document.createElement('div');
+  popup.className = 'boss-popup';
+
+  const typeBadge = boss.bossType === 2
+    ? '<span class="badge badge-golden">Golden</span>'
+    : '<span class="badge badge-red">Red</span>';
+
+  const cx = movedBosses[boss.id] ? movedBosses[boss.id].coordX : boss.coordX;
+  const cy = movedBosses[boss.id] ? movedBosses[boss.id].coordY : boss.coordY;
+  const moved = movedBosses[boss.id] ? ' (moved)' : '';
+
+  const reviveMin = Math.floor(boss.durationToRevive / 60);
+  const reviveSec = boss.durationToRevive % 60;
+  const reviveStr = reviveMin > 0
+    ? `${reviveMin}m ${reviveSec > 0 ? reviveSec + 's' : ''}`
+    : `${boss.durationToRevive}s`;
+
+  popup.innerHTML = `
+    <div class="popup-header">
+      <h4>${esc(boss.name)}</h4>
+      <button class="popup-close" onclick="closePopup()">&times;</button>
+    </div>
+    <div class="info-row"><span class="label">ID</span><span class="value">${boss.id}</span></div>
+    <div class="info-row"><span class="label">Type</span><span>${typeBadge}</span></div>
+    <div class="info-row"><span class="label">Coord X</span><span class="value">${cx}${moved}</span></div>
+    <div class="info-row"><span class="label">Coord Y</span><span class="value">${cy}${moved}</span></div>
+    <div class="info-row"><span class="label">Revive</span><span class="value">${reviveStr}</span></div>
+    <div class="popup-actions">
+      <button class="btn btn-danger" onclick="markDeleteBoss(${boss.id})">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Delete
+      </button>
+    </div>
+  `;
+
+  positionPopup(popup, dotEl, container);
+  activePopup = popup;
+}
+
+function showNewPopup(boss, idx, dotEl) {
+  closePopup();
+  const container = document.getElementById('mapContainer');
+  const popup = document.createElement('div');
+  popup.className = 'boss-popup';
+
+  const typeBadge = boss.bossType === 2
+    ? '<span class="badge badge-golden">Golden</span>'
+    : '<span class="badge badge-red">Red</span>';
+
+  popup.innerHTML = `
+    <div class="popup-header">
+      <h4>${esc(boss.name)}</h4>
+      <button class="popup-close" onclick="closePopup()">&times;</button>
+    </div>
+    <div class="info-row"><span class="label">Status</span><span class="value" style="color:var(--gold);">New (pending)</span></div>
+    <div class="info-row"><span class="label">Type</span><span>${typeBadge}</span></div>
+    <div class="info-row"><span class="label">Coord X</span><span class="value">${boss.coordX}</span></div>
+    <div class="info-row"><span class="label">Coord Y</span><span class="value">${boss.coordY}</span></div>
+    <div class="popup-actions">
+      <button class="btn btn-danger" onclick="removeNewBoss(${idx})">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Remove
+      </button>
+    </div>
+  `;
+
+  positionPopup(popup, dotEl, container);
+  activePopup = popup;
+}
+
+function positionPopup(popup, dotEl, container) {
+  let left = dotEl.offsetLeft + 16;
+  let top = dotEl.offsetTop - 8;
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+  container.appendChild(popup);
+
+  const popRect = popup.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  if (popRect.right > containerRect.right) {
+    popup.style.left = (dotEl.offsetLeft - popup.offsetWidth - 8) + 'px';
+  }
+  if (popRect.bottom > containerRect.bottom) {
+    popup.style.top = (dotEl.offsetTop - popup.offsetHeight + 16) + 'px';
+  }
+}
+
+function closePopup() {
+  if (activePopup) { activePopup.remove(); activePopup = null; }
+}
+
+function markDeleteBoss(bossId) {
+  if (!deletedBossIds.includes(bossId)) {
+    deletedBossIds.push(bossId);
+  }
+  closePopup();
+  updateChangesUI();
+  updateBossCount();
+  plotBosses();
+  toast('Boss marked for deletion (pending)');
+}
+
+function removeNewBoss(idx) {
+  newBosses.splice(idx, 1);
+  closePopup();
+  updateChangesUI();
+  updateBossCount();
+  plotBosses();
+}
+
+// --- Apply Changes ---
+async function applyChanges() {
+  const btn = document.getElementById('btnApply');
+  btn.disabled = true;
+  btn.textContent = 'Applying...';
+
+  try {
+    // 1. Delete bosses
+    for (const bossId of deletedBossIds) {
+      const res = await fetch(`${API}/api/maps/${mapId}/bosses/${bossId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(`Failed to delete boss ${bossId}`);
+    }
+
+    // 2. Update moved bosses
+    for (const [bossId, coords] of Object.entries(movedBosses)) {
+      if (deletedBossIds.includes(parseInt(bossId))) continue;
+      const res = await fetch(`${API}/api/maps/${mapId}/bosses/${bossId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coordX: coords.coordX, coordY: coords.coordY }),
+      });
+      if (!res.ok) throw new Error(`Failed to update boss ${bossId}`);
+    }
+
+    // 3. Create new bosses
+    for (const boss of newBosses) {
+      const res = await fetch(`${API}/api/maps/${mapId}/bosses`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(boss),
+      });
+      if (!res.ok) throw new Error('Failed to create boss');
+    }
+
+    // Reset tracking & reload
+    newBosses = [];
+    movedBosses = {};
+    deletedBossIds = [];
+
+    const bossesRes = await fetch(`${API}/api/maps/${mapId}/bosses`);
+    bosses = await bossesRes.json();
+
+    updateChangesUI();
+    updateBossCount();
+    plotBosses();
+    toast('All changes applied!');
+  } catch (err) {
+    toast(err.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Apply Changes';
+  }
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// Close popup on outside click
+document.addEventListener('click', e => {
+  if (activePopup && !e.target.closest('.boss-popup') && !e.target.closest('.boss-dot')) {
+    closePopup();
+  }
+});
+
+// --- Zoom (mouse wheel) ---
+document.getElementById('mapViewport').addEventListener('wheel', e => {
+  e.preventDefault();
+  const viewport = document.getElementById('mapViewport');
+  const rect = viewport.getBoundingClientRect();
+
+  // Mouse position relative to viewport
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  // Point in container space before zoom
+  const cx = (mx - panX) / zoom;
+  const cy = (my - panY) / zoom;
+
+  // Apply zoom
+  const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+  zoom = Math.max(1, Math.min(10, zoom * factor));
+
+  // Adjust pan so cursor point stays fixed
+  panX = mx - cx * zoom;
+  panY = my - cy * zoom;
+  clampPan();
+  updateTransform();
+}, { passive: false });
+
+// --- Pan (right-click drag) ---
+{
+  let isPanning = false;
+  let panStartX, panStartY, panOriginX, panOriginY;
+
+  // Disable context menu on viewport so right-click is free for panning
+  document.getElementById('mapViewport').addEventListener('contextmenu', e => e.preventDefault());
+
+  document.getElementById('mapViewport').addEventListener('mousedown', e => {
+    if (e.button !== 2 || zoom <= 1) return; // right button only, only when zoomed
+    e.preventDefault();
+    isPanning = true;
+    panStartX = e.clientX;
+    panStartY = e.clientY;
+    panOriginX = panX;
+    panOriginY = panY;
+    document.getElementById('mapViewport').style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!isPanning) return;
+    panX = panOriginX + (e.clientX - panStartX);
+    panY = panOriginY + (e.clientY - panStartY);
+    clampPan();
+    updateTransform();
+  });
+
+  document.addEventListener('mouseup', e => {
+    if (!isPanning) return;
+    isPanning = false;
+    document.getElementById('mapViewport').style.cursor = '';
+  });
+}
+
+// Replot on resize
+window.addEventListener('resize', () => {
+  if (document.getElementById('mapDisplay').style.display !== 'none') {
+    clampPan();
+    updateTransform();
+    plotBosses();
+  }
+});
+
+init();
+</script>
+</body>
+</html>

@@ -34,6 +34,11 @@ def ocr_scores_page():
     return send_from_directory(PAGES_DIR, "ocr_scores.html")
 
 
+@app.route("/map/preview/<path:map_id>")
+def map_preview_page(map_id):
+    return send_from_directory(PAGES_DIR, "map_preview.html")
+
+
 # Register API blueprints
 app.register_blueprint(map_bp)
 app.register_blueprint(config_bp)

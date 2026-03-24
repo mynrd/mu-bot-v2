@@ -1088,7 +1088,7 @@
   {
     "id": 13,
     "mapId": "SANC5-G-02",
-    "name": "Sanctuary 5 - Golden Only 2",
+    "name": "Sanctuary 5",
     "totalChannel": 4,
     "bosses": [
       {
@@ -1124,6 +1124,33 @@
         "coordX": 971,
         "coordY": 636,
         "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC5-G-02"
+      },
+      {
+        "id": 212,
+        "name": "Sanctuary 5 - Boss 1",
+        "coordX": 1078,
+        "coordY": 748,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC5-G-02"
+      },
+      {
+        "id": 213,
+        "name": "Sanctuary 5 - Boss 2",
+        "coordX": 1058,
+        "coordY": 614,
+        "bossType": 1,
+        "durationToRevive": 0,
+        "mapId": "SANC5-G-02"
+      },
+      {
+        "id": 214,
+        "name": "Sanctuary 5 - Boss 3",
+        "coordX": 918,
+        "coordY": 594,
+        "bossType": 1,
         "durationToRevive": 0,
         "mapId": "SANC5-G-02"
       }
