@@ -369,6 +369,8 @@
   <div class="sep"></div>
   <a href="/">Map Manager</a>
   <div class="sep"></div>
+  <a href="/ocr-scores">OCR Scores</a>
+  <div class="sep"></div>
   <div class="select-wrap">
     <select id="fileSelect"><option value="">Select a config file...</option></select>
   </div>
@@ -445,6 +447,8 @@ const FIELD_META = {
   SKIP_VALIDATION_BUFF: { label: 'Skip Buff Validation', type: 'bool' },
   SKIP_BUFFER: { label: 'Skip Buffer', type: 'bool' },
   DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK: { label: 'Debug on Max Retries (Attack)', type: 'bool' },
+
+  ALLIANCE_MODE: { label: 'Alliance Mode', type: 'bool' },
 };
 
 // --- Sections & conditional logic ---
@@ -452,7 +456,7 @@ const SECTIONS = [
   {
     title: 'Mode Selection',
     show: () => true,
-    fields: ['AFK_MODE', 'IS_BUFFER'],
+    fields: ['AFK_MODE', 'IS_BUFFER', 'ALLIANCE_MODE'],
     layout: 'checks',
   },
   {

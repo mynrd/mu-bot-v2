@@ -27,7 +27,7 @@ def _refresh_bot_config_loop(stop_event: threading.Event):
 
     while not stop_event.is_set():
         try:
-            config_text = local_data.load_config_text()
+            config_text = local_data.load_config_text(botname=state.BOT_NAME)
             with state.BOT_CONFIG_LOCK:
                 state.CONFIG_CONTENT = config_text
                 state.BOT_CONFIG.configurationTextContent = config_text

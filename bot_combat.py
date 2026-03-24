@@ -383,15 +383,17 @@ def _engage_boss_and_update(
             state.console_log(ign, f"isValidToKill: {isValidToKill}")
             if isValidToKill:
                 state.console_log(ign, f"Starting to kill the red boss at {target_boss}.")
-                shoud_exit = monitor_until_its_gone(
+                should_exit = monitor_until_its_gone(
                     device,
                     ign=state.BOT_CONFIG.IGN,
                     ignoreName=state.BOT_CONFIG.IGNORE_NAME,
                     skipNames=state.BOT_CONFIG.SKIP_NAMES,
                     debug=state.BOT_CONFIG.DEBUG,
                 )
-                state.console_log(ign, f"shoud_exit: {shoud_exit}")
-                time.sleep(3)
+                state.console_log(ign, f"Finished monitoring boss. Boss should be gone")
+
+                state.console_log(ign, f"should_exit: {should_exit}")
+                time.sleep(3) # wait for possible loots and pick up before moving on
                 names = ", ".join(state.CURRENT_FOUND_IGN_ON_BOSS) if state.CURRENT_FOUND_IGN_ON_BOSS else "(none)"
                 try:
                     local_data.add_attack_record(bot_id=state.BOT_CONFIG.id, boss_id=state.CURRENT_TARGET.id if state.CURRENT_TARGET else None, coin=0, coin_bound=0, start_attack=state._DATETIME_START_ATTACK, end_attack=datetime.now(), map_id=state.CURRENT_MAP_ID, found_attack_name=ign)
@@ -400,7 +402,7 @@ def _engage_boss_and_update(
 
                 state.CURRENT_TARGET = None
 
-                if shoud_exit:
+                if should_exit:
                     return True, True, alive_all_type_bosses
 
                 adb_helpers.do_clear_screen(device, ign=state.BOT_CONFIG.IGN)
@@ -428,7 +430,7 @@ def _engage_boss_and_update(
                 adb_helpers.do_tap(device, coord, ign=ign)
 
                 adb_helpers.do_clear_screen(device, ign=state.BOT_CONFIG.IGN)
-                adb_helpers.go_to_starting_position(device, ign=state.BOT_CONFIG.IGN)
+                # adb_helpers.go_to_starting_position(device, ign=state.BOT_CONFIG.IGN)
 
                 import search_text_image
 

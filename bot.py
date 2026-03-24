@@ -35,9 +35,24 @@ def parse_args(argv=None):
     parser.add_argument("--reopen", action="store_true", help="Reopen the app if it's not running")
     parser.add_argument("--check-git-updates", action="store_true", help="Check for latest git codes and auto-restart if updated")
     parser.add_argument("--afk-mode", action="store_true", help="Enable AFK mode (stay at AFK spot)")
+    parser.add_argument("botname", nargs="?", default=None, help="Bot name — loads config/bot_config.{botname}.ini")
 
-    if argv is None and len(sys.argv) <= 1:
-        config = state.load_bot_config()
+    has_flags = argv is None and any(a.startswith("-") for a in sys.argv[1:])
+    if argv is None and not has_flags:
+        # Extract botname from positional arg if present (e.g. "python bot.py yawa")
+        botname = sys.argv[1] if len(sys.argv) > 1 else None
+        # Load config from the appropriate config file
+        state.BOT_NAME = botname
+        config_text = __import__("local_data").load_config_text(botname=botname)
+        state.CONFIG_CONTENT = config_text
+        config = {}
+        for raw_line in config_text.splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or ":" not in line:
+                continue
+            k, v = line.split(":", 1)
+            config[k.strip().upper()] = v.strip()
+
         bool_args = {"ignore-name", "use-teleport", "engage-red-boss", "skip-buffer",
                       "engage-golden-boss", "debug", "wait-buffer", "reopen",
                       "check-git-updates", "afk-mode"}
@@ -53,6 +68,8 @@ def parse_args(argv=None):
                 if str(v) != "":
                     fake_argv.append(f"--{k_cli}")
                     fake_argv.append(str(v))
+        if botname:
+            fake_argv.append(botname)
         return parser.parse_args(fake_argv)
     return parser.parse_args(argv)
 
@@ -68,7 +85,7 @@ def run_buffer_mode(device: str, ign: str) -> None:
         try:
             if adb_helpers.check_if_app_is_open(device, ign=ign) == False:
                 console_log_with_ign(ign, "App is not open, reopening app...")
-                adb_helpers.reopen_app(device, ign=ign)
+                adb_helpers.reopen_app(device, ign=ign, alliance_mode=state.BOT_CONFIG.ALLIANCE_MODE)
                 time.sleep(5)
                 adb_helpers.teleport_to_endless_abyss(device, ign=ign)
 
@@ -88,7 +105,7 @@ def run_buffer_mode(device: str, ign: str) -> None:
                 console_log_with_ign(ign, "1 hour elapsed in buffer mode. Reopening app...")
                 adb_helpers.close_app(device, ign=ign)
 
-                adb_helpers.reopen_app(device, ign=ign)
+                adb_helpers.reopen_app(device, ign=ign, alliance_mode=state.BOT_CONFIG.ALLIANCE_MODE)
                 time.sleep(2)
                 adb_helpers.teleport_to_endless_abyss(device, ign=ign)
                 time.sleep(2)
@@ -140,7 +157,8 @@ def main(args) -> int:
     _start_ctrl_p_listener()
 
     # Load config from local file
-    config_text = local_data.load_config_text()
+    state.BOT_NAME = args.botname
+    config_text = local_data.load_config_text(botname=state.BOT_NAME)
     state.CONFIG_CONTENT = config_text
     state.BOT_CONFIG = BotSettings(id=state.BOT_ID, name="local", configurationTextContent=config_text)
 
@@ -185,7 +203,7 @@ def main(args) -> int:
 
     if reopen or adb_helpers.check_if_app_is_open(state.DEVICE, ign=state.BOT_CONFIG.IGN) == False:
         console_log_with_ign(state.BOT_CONFIG.IGN, "App is not open or --reopen specified, reopening app...")
-        adb_helpers.reopen_app(state.DEVICE, ign=state.BOT_CONFIG.IGN)
+        adb_helpers.reopen_app(state.DEVICE, ign=state.BOT_CONFIG.IGN, alliance_mode=state.BOT_CONFIG.ALLIANCE_MODE)
 
     # Load map locations from local file
     map_ids = [m.strip() for m in str(state.BOT_CONFIG.MAP).split(",") if m.strip()]
@@ -244,7 +262,7 @@ def main(args) -> int:
 
                     state.console_log("Reopening app...")
                     try:
-                        adb_helpers.reopen_app(state.DEVICE, ign=state.BOT_CONFIG.IGN)
+                        adb_helpers.reopen_app(state.DEVICE, ign=state.BOT_CONFIG.IGN, alliance_mode=state.BOT_CONFIG.ALLIANCE_MODE)
                     except Exception as e:
                         state.console_log(f"Failed to reopen app, non-fatal: {e}")
                     try:

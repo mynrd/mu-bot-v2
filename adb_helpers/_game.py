@@ -30,7 +30,7 @@ def do_open_map(device, ign, debug=False):
     time.sleep(0.5)
 
 
-def reopen_app(device, ign, package_name="com.tszz.gpsea"):
+def reopen_app(device, ign, package_name="com.tszz.gpsea", alliance_mode=False):
     # Run the sequence; if it took >= 60s, retry once.
     import search_text_image
 
@@ -51,7 +51,7 @@ def reopen_app(device, ign, package_name="com.tszz.gpsea"):
             do_tap(device, (74.3795, 51.8492), ign=ign, remarks="Random click to dismiss popups")
             time.sleep(0.2)
 
-            result = search_text_image.get_search_text("reopen_app:start_game", grab_raw_rgba(device, ign), region=(834, 762, 1078, 851), debug=False)
+            result = search_text_image.get_search_text("reopen_app:start_game-" + str(alliance_mode), grab_raw_rgba(device, ign), region=(834, 762, 1078, 851), debug=False)
             if "start game".lower() in result.lower():
 
                 do_tap(device, (958, 805), ign=ign, remarks="Click Start Game")
@@ -66,7 +66,7 @@ def reopen_app(device, ign, package_name="com.tszz.gpsea"):
                 open_app(device, package_name)
 
         while True:
-            result = search_text_image.get_search_text("reopen_app:startgame", grab_raw_rgba(device, ign), region=(823, 952, 1097, 1041), debug=False)
+            result = search_text_image.get_search_text("reopen_app:startgame-" + str(alliance_mode), grab_raw_rgba(device, ign), region=(823, 952, 1097, 1041), debug=False)
             if "startgame".lower() in result.lower():
                 do_tap(device, (955, 998), ign=ign, remarks="Click StartGame")
                 console_log_with_ign(ign, "Found 'StartGame' text; proceeding.")
@@ -79,7 +79,7 @@ def reopen_app(device, ign, package_name="com.tszz.gpsea"):
                 console_log_with_ign(ign, "Timeout waiting for 'Auto Spot' text; proceeding anyway.")
                 time.sleep(1)
                 break
-            result = search_text_image.get_search_text("reopen_app:auto_spot", grab_raw_rgba(device, ign), region=(251, 222, 445, 279), debug=False)
+            result = search_text_image.get_search_text("reopen_app:auto_spot-" + str(alliance_mode), grab_raw_rgba(device, ign), region=(251, 222, 445, 279), debug=False)
             if "auto".lower() in result.lower():
                 time.sleep(1)
                 do_tap(device, (1681, 166), ign=ign, remarks="Close AutoPlay")
@@ -168,7 +168,12 @@ def do_check_if_buffed(device, ign, min_dmg_red=0, debug=False, skip_validation_
     do_tap(device, (1865, 733), ign=ign, debug=debug)
     time.sleep(1)
 
+    loop_start = time.time()
     while True:
+        if time.time() - loop_start > 60:
+            console_log_with_ign(ign, "Buff check loop exceeded 1 minute. Skipping to next action.")
+            return False
+
         img_stat = grab_raw_rgba(device, ign, False)
         # res = search_text_image.get_text_stats(img_stat, region=(1478, 104, 1890, 973), debug=False)
         res = search_text_image.get_search_text("check_if_buffed:dmg_red", img_stat, "Dmg Reduction", region=(1478, 104, 1890, 973), debug=False)

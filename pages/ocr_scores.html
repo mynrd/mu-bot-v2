@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCR Scores</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --surface: #131825;
+    --surface2: #1a2035;
+    --border: rgba(255,255,255,0.06);
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --red: #ef4444;
+    --red-soft: rgba(239,68,68,0.12);
+    --gold: #eab308;
+    --gold-soft: rgba(234,179,8,0.12);
+    --green: #22c55e;
+    --green-soft: rgba(34,197,94,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* --- Layout --- */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+  }
+  .topbar h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .topbar .sep { width: 1px; height: 24px; background: var(--border); }
+  .topbar a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .topbar a:hover { color: var(--text); }
+
+  .main { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+
+  /* --- Stats row --- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+  }
+  .stat-card .label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .stat-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* --- Card --- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .card-header h2 { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* --- Filters --- */
+  .filters {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .select-wrap { position: relative; }
+  .select-wrap select {
+    appearance: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 36px 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    min-width: 220px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .select-wrap select:hover { border-color: var(--accent); }
+  .select-wrap select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  .select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .search-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    min-width: 200px;
+    transition: border-color 0.15s;
+  }
+  .search-input::placeholder { color: var(--text-muted); }
+  .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+
+  /* --- Table --- */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  thead th:hover { color: var(--text); }
+  thead th.sorted { color: var(--accent); }
+  thead th .sort-arrow { font-size: 0.65rem; margin-left: 4px; }
+
+  tbody td {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba(99,102,241,0.04); }
+  td.mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.78rem; color: var(--text-muted); }
+  td.right { text-align: right; }
+
+  /* --- Badges --- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .badge-green { background: var(--green-soft); color: var(--green); }
+  .badge-red { background: var(--red-soft); color: var(--red); }
+  .badge-gold { background: var(--gold-soft); color: var(--gold); }
+  .badge-muted { background: rgba(100,116,139,0.12); color: var(--text-muted); }
+
+  /* --- Rate bar --- */
+  .rate-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rate-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+  .rate-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+  .rate-bar-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    min-width: 42px;
+    text-align: right;
+  }
+
+  /* --- Empty --- */
+  .empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+  }
+  .empty p { font-size: 0.9rem; }
+
+  /* --- Toast --- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.25s;
+    z-index: 300;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>OCR Scores</h1>
+  <div class="sep"></div>
+  <a href="/">Map Manager</a>
+  <div class="sep"></div>
+  <a href="/config">Bot Config</a>
+</div>
+
+<div class="main">
+  <!-- Summary stats -->
+  <div class="stats" id="stats">
+    <div class="stat-card"><div class="label">Total Records</div><div class="value" id="statTotal">--</div></div>
+    <div class="stat-card"><div class="label">Sources</div><div class="value" id="statSources">--</div></div>
+    <div class="stat-card"><div class="label">Pipelines</div><div class="value" id="statKeys">--</div></div>
+    <div class="stat-card"><div class="label">Overall Hit Rate</div><div class="value" id="statRate">--</div></div>
+    <div class="stat-card"><div class="label">Avg Latency</div><div class="value" id="statAvgMs">--</div></div>
+  </div>
+
+  <!-- Aggregated table -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Performance by Source &amp; Pipeline</h2>
+      <div class="filters">
+        <div class="select-wrap">
+          <select id="sourceFilter">
+            <option value="">All sources</option>
+          </select>
+        </div>
+        <input class="search-input" id="keySearch" type="text" placeholder="Filter pipeline key...">
+      </div>
+    </div>
+    <div id="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-col="source">Source <span class="sort-arrow"></span></th>
+            <th data-col="key">Pipeline Key <span class="sort-arrow"></span></th>
+            <th data-col="total">Samples <span class="sort-arrow"></span></th>
+            <th data-col="found">Hits <span class="sort-arrow"></span></th>
+            <th data-col="rate" class="sorted">Hit Rate <span class="sort-arrow"></span></th>
+            <th data-col="avgMs">Avg ms <span class="sort-arrow"></span></th>
+            <th data-col="minMs">Min ms <span class="sort-arrow"></span></th>
+            <th data-col="maxMs">Max ms <span class="sort-arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+let allData = [];
+let sortCol = 'rate';
+let sortAsc = false;
+
+async function loadSummary() {
+  try {
+    const res = await fetch(`${API}/api/ocr-scores/summary`);
+    const s = await res.json();
+    document.getElementById('statTotal').textContent = s.totalRecords.toLocaleString();
+    document.getElementById('statSources').textContent = s.sources;
+    document.getElementById('statKeys').textContent = s.keys;
+    document.getElementById('statRate').textContent = s.overallRate + '%';
+    document.getElementById('statAvgMs').textContent = s.avgMs + ' ms';
+  } catch (e) {
+    console.error('Failed to load summary', e);
+  }
+}
+
+async function loadScores() {
+  try {
+    const res = await fetch(`${API}/api/ocr-scores`);
+    allData = await res.json();
+    populateSourceFilter();
+    renderTable();
+  } catch (e) {
+    console.error('Failed to load scores', e);
+    document.getElementById('tbody').innerHTML = '<tr><td colspan="8" class="empty"><p>Failed to load data</p></td></tr>';
+  }
+}
+
+function populateSourceFilter() {
+  const sel = document.getElementById('sourceFilter');
+  const sources = [...new Set(allData.map(d => d.source))].sort();
+  sources.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+function getFiltered() {
+  const sourceVal = document.getElementById('sourceFilter').value;
+  const keyVal = document.getElementById('keySearch').value.toLowerCase();
+  return allData.filter(d => {
+    if (sourceVal && d.source !== sourceVal) return false;
+    if (keyVal && !d.key.toLowerCase().includes(keyVal)) return false;
+    return true;
+  });
+}
+
+function renderTable() {
+  const data = getFiltered();
+
+  // Sort
+  data.sort((a, b) => {
+    let va = a[sortCol], vb = b[sortCol];
+    if (typeof va === 'string') {
+      va = va.toLowerCase();
+      vb = vb.toLowerCase();
+      return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    }
+    return sortAsc ? va - vb : vb - va;
+  });
+
+  // Update header highlight
+  document.querySelectorAll('thead th').forEach(th => {
+    const col = th.dataset.col;
+    th.classList.toggle('sorted', col === sortCol);
+    const arrow = th.querySelector('.sort-arrow');
+    if (col === sortCol) {
+      arrow.textContent = sortAsc ? ' \u25B2' : ' \u25BC';
+    } else {
+      arrow.textContent = '';
+    }
+  });
+
+  const tbody = document.getElementById('tbody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty"><p>No matching records</p></td></tr>';
+    return;
+  }
+
+  let html = '';
+  for (const d of data) {
+    const rateColor = d.rate >= 50 ? 'var(--green)' : d.rate > 0 ? 'var(--gold)' : 'var(--text-muted)';
+    const badgeClass = d.rate >= 50 ? 'badge-green' : d.rate > 0 ? 'badge-gold' : 'badge-muted';
+
+    html += `<tr>
+      <td>${esc(d.source)}</td>
+      <td class="mono">${esc(d.key)}</td>
+      <td class="right">${d.total}</td>
+      <td class="right">${d.found}</td>
+      <td>
+        <div class="rate-bar">
+          <div class="rate-bar-track">
+            <div class="rate-bar-fill" style="width:${d.rate}%;background:${rateColor}"></div>
+          </div>
+          <span class="badge ${badgeClass}">${d.rate}%</span>
+        </div>
+      </td>
+      <td class="mono right">${d.avgMs}</td>
+      <td class="mono right">${d.minMs}</td>
+      <td class="mono right">${d.maxMs}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// Sort on header click
+document.querySelectorAll('thead th[data-col]').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    if (sortCol === col) {
+      sortAsc = !sortAsc;
+    } else {
+      sortCol = col;
+      sortAsc = col === 'source' || col === 'key';
+    }
+    renderTable();
+  });
+});
+
+// Filters
+document.getElementById('sourceFilter').addEventListener('change', renderTable);
+document.getElementById('keySearch').addEventListener('input', renderTable);
+
+// Init
+loadSummary();
+loadScores();
+</script>
+</body>
+</html>

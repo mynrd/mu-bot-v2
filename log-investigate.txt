@@ -1,0 +1,52 @@
+[2026-03-23 19:59:00] [mynrd] Remarks: Tap to nearest red boss
+[2026-03-23 19:59:03] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 430.20227800419656
+[2026-03-23 19:59:06] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 399.9412456849131
+[2026-03-23 19:59:09] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 389.6793553679743
+[2026-03-23 19:59:12] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 372.5922704512266
+[2026-03-23 19:59:15] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 377.0371334497439
+[2026-03-23 19:59:18] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 356.7239829335841
+[2026-03-23 19:59:21] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 317.9213739275798
+[2026-03-23 19:59:24] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 281.0071173475861
+[2026-03-23 19:59:27] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 237.62154784446633
+[2026-03-23 19:59:30] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 196.9466932954194
+[2026-03-23 19:59:33] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 151.81897114655993
+[2026-03-23 19:59:36] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 112.40106761058811
+[2026-03-23 19:59:39] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 70.77428911688199
+[2026-03-23 19:59:42] [mynrd] [bot_combat.py:367] mynrd Near: False, Distance: 39.11521443121589
+[2026-03-23 19:59:45] [mynrd] [bot_combat.py:370] mynrd Arrived at Red Boss location (998, 559, 0.9797577857971191, 0.0, 1.0).
+[2026-03-23 19:59:45] [mynrd] [_input.py:157] - Tapping at (35.36, 99.0754) (mode=auto)
+[2026-03-23 19:59:45] [mynrd] [_input.py:157] - Tapping at (35.36, 99.0754) (mode=auto)
+[2026-03-23 19:59:45] [mynrd] [_input.py:157] - Tapping at (38.48, 98.7909) (mode=auto)
+[2026-03-23 19:59:45] [mynrd] [_input.py:157] - Tapping at (38.48, 98.7909) (mode=auto)
+[2026-03-23 19:59:45] [mynrd] Starting kill action sequence...
+[2026-03-23 19:59:45] [mynrd] [bot_combat.py:188] - Tapping at (92.7152, 81.8851) (mode=auto)
+[2026-03-23 19:59:45] [mynrd] Remarks: Tap Attack
+[2026-03-23 19:59:46] [mynrd] [bot_combat.py:190] - Tapping at (92.7152, 81.8851) (mode=auto)
+[2026-03-23 19:59:46] [mynrd] Remarks: Tap Attack
+[2026-03-23 19:59:48] [mynrd] Ensuring auto-attack mode is active...
+[2026-03-23 19:59:48] [mynrd] Kill action attempt 1 of 2...
+[2026-03-23 19:59:48] [mynrd] Checking if 'mynrd' exists in region (attempt 1/2)...
+[2026-03-23 19:59:52] [mynrd] "mynrd" not found in region (attempt 1), retrying...
+[2026-03-23 19:59:52] [mynrd] Kill action attempt 2 of 2...
+[2026-03-23 19:59:52] [mynrd] Checking if 'mynrd' exists in region (attempt 2/2)...
+[2026-03-23 19:59:56] [mynrd] Killing not detected after 2 attempts: "mynrd" not found.
+[2026-03-23 19:59:56] [mynrd] [bot_combat.py:383] mynrd isValidToKill: False
+[2026-03-23 19:59:56] [mynrd] [bot_combat.py:424] mynrd Not a valid boss to kill.
+[2026-03-23 19:59:56] [mynrd] [bot_combat.py:428] - Tapping at (84.0, 76.0) (mode=auto)
+[2026-03-23 19:59:56] [mynrd] [_input.py:157] - Tapping at (35.36, 99.0754) (mode=auto)
+[2026-03-23 19:59:57] [mynrd] [_input.py:157] - Tapping at (35.36, 99.0754) (mode=auto)
+[2026-03-23 19:59:57] [mynrd] [_input.py:157] - Tapping at (38.48, 98.7909) (mode=auto)
+[2026-03-23 19:59:57] [mynrd] [_input.py:157] - Tapping at (38.48, 98.7909) (mode=auto)
+[2026-03-23 19:59:57] [mynrd] Going to starting position...
+[2026-03-23 19:59:57] [mynrd] [_input.py:157] - Tapping at (35.36, 99.0754) (mode=auto)
+[2026-03-23 19:59:58] [mynrd] [_input.py:157] - Tapping at (35.36, 99.0754) (mode=auto)
+[2026-03-23 19:59:58] [mynrd] [_input.py:157] - Tapping at (38.48, 98.7909) (mode=auto)
+[2026-03-23 19:59:58] [mynrd] [_input.py:157] - Tapping at (38.48, 98.7909) (mode=auto)
+[2026-03-23 19:59:58] [mynrd] [_game.py:566] - Tapping at (97.559, 2.34708) (mode=auto)
+[2026-03-23 19:59:59] [mynrd] [_game.py:568] - Tapping at (49.9, 76.5292) (mode=auto)
+[2026-03-23 20:00:01] [mynrd] [_input.py:157] - Tapping at (35.36, 99.0754) (mode=auto)
+[2026-03-23 20:00:01] [mynrd] [_input.py:157] - Tapping at (35.36, 99.0754) (mode=auto)
+[2026-03-23 20:00:01] [mynrd] [_input.py:157] - Tapping at (38.48, 98.7909) (mode=auto)
+[2026-03-23 20:00:02] [mynrd] [_input.py:157] - Tapping at (38.48, 98.7909) (mode=auto)
+[2026-03-23 20:00:02] [mynrd] [_game.py:29] - Tapping at (92.9963, 12.8866) (mode=auto)
+[2026-03-23 20:00:02] [mynrd] Remarks: Tap to Map

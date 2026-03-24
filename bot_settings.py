@@ -34,11 +34,12 @@ class BotSettings:
     BUFFER_WHITELIST_NAMES: list[str] = field(default_factory=list)
     BUFFER_WHITELIST_GUILDS: list[str] = field(default_factory=list)
     TAP_SKILL_CANCEL_ATTACK_COORDS: Tuple[float, float] = None
-    DAWN_MODE: bool = False
+
     ADB_SHOW_TAP: bool = False
     SKIP_VALIDATION_BUFF: bool = False
     SKIP_BUFFER: bool = False
     DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK: bool = False
+    ALLIANCE_MODE: bool = False
 
     @staticmethod
     def _to_bool(val: str | bool) -> bool:
@@ -78,9 +79,10 @@ class BotSettings:
             BUFFER_WHITELIST_NAMES=[s.strip() for s in config.get("BUFFER_WHITELIST_NAMES", "").split(",") if s.strip()],
             BUFFER_WHITELIST_GUILDS=[s.strip() for s in config.get("BUFFER_WHITELIST_GUILDS", "").split(",") if s.strip()],
             TAP_SKILL_CANCEL_ATTACK_COORDS=tuple(map(float, config.get("TAP_SKILL_CANCEL_ATTACK_COORDS", "").split(","))) if config.get("TAP_SKILL_CANCEL_ATTACK_COORDS") else (prev.TAP_SKILL_CANCEL_ATTACK_COORDS if prev else None),
-            DAWN_MODE=cls._to_bool(config.get("DAWN_MODE", prev.DAWN_MODE if prev else False)),
+
             ADB_SHOW_TAP=cls._to_bool(config.get("ADB_SHOW_TAP", prev.ADB_SHOW_TAP if prev else False)),
             SKIP_VALIDATION_BUFF=cls._to_bool(config.get("SKIP_VALIDATION_BUFF", prev.SKIP_VALIDATION_BUFF if prev else False)),
             SKIP_BUFFER=cls._to_bool(config.get("SKIP_BUFFER", prev.SKIP_BUFFER if prev else False)),
             DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK=cls._to_bool(config.get("DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK", prev.DEBUG_MODE_ON_MAX_RETRIES_EXCEEDED_ON_ATTACK if prev else False)),
+            ALLIANCE_MODE=cls._to_bool(config.get("ALLIANCE_MODE", prev.ALLIANCE_MODE if prev else False)),
         )

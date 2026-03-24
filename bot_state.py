@@ -26,6 +26,7 @@ RESTART_AFTER_MINUTES = 60
 VIP_MAP = 5
 WAIT_BUFFER = True
 BOT_PAUSE = False
+BOT_NAME = None
 
 BOT_CONFIG: BotSettings = BotSettings(
     DEBUG=False, id=0, name="", configurationTextContent="", IGN="", PORT="",
@@ -119,7 +120,7 @@ def load_bot_config():
         "BUFFER_WHITELIST_NAMES": "",
         "BUFFER_WHITELIST_GUILDS": "",
         "TAP_SKILL_CANCEL_ATTACK_COORDS": ",".join(map(str, BOT_CONFIG.TAP_SKILL_CANCEL_ATTACK_COORDS)) if BOT_CONFIG.TAP_SKILL_CANCEL_ATTACK_COORDS else "",
-        "DAWN_MODE": "true" if BOT_CONFIG.DAWN_MODE else "false",
+
         "SKIP_VALIDATION_BUFF": "true" if BOT_CONFIG.SKIP_VALIDATION_BUFF else "false",
         "SKIP_BUFFER": "true" if BOT_CONFIG.SKIP_BUFFER else "false",
     }

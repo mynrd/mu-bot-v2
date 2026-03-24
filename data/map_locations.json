@@ -1523,5 +1523,55 @@
         "mapId": "SB-02"
       }
     ]
+  },
+  {
+    "id": 20,
+    "mapId": "SANC6-G-01",
+    "name": "Sanctuary 6 - Golden Only 1",
+    "totalChannel": 4,
+    "bosses": [
+      {
+        "id": 135,
+        "name": "Sanctuary VIP 5 - Golden - 01",
+        "coordX": 1023,
+        "coordY": 691,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC5-G-02",
+        "lastKilled": "2026-03-23T11:10:08.708628Z"
+      },
+      {
+        "id": 136,
+        "name": "Sanctuary VIP 5 - Golden - 02",
+        "coordX": 1110,
+        "coordY": 656,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC5-G-02",
+        "lastKilled": "2026-03-23T11:07:13.749899Z",
+        "engageDate": "2026-03-23T11:10:28.934734Z",
+        "engageBy": "local"
+      },
+      {
+        "id": 137,
+        "name": "Sanctuary VIP 5 - Golden - 03",
+        "coordX": 1005,
+        "coordY": 549,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC5-G-02",
+        "lastKilled": "2026-03-23T11:00:09.115763Z"
+      },
+      {
+        "id": 138,
+        "name": "Sanctuary VIP 5 - Golden - 04",
+        "coordX": 971,
+        "coordY": 636,
+        "bossType": 2,
+        "durationToRevive": 0,
+        "mapId": "SANC5-G-02",
+        "lastKilled": "2026-03-23T11:08:41.747736Z"
+      }
+    ]
   }
 ]

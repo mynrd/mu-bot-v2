@@ -115,9 +115,13 @@ def _to_utc_iso(dt: datetime) -> str:
 # Config – read from config/bot_config.ini
 # ---------------------------------------------------------------------------
 
-def load_config_text() -> str:
-    """Read the raw text content of config/bot_config.ini."""
-    path = os.path.join(CONFIG_DIR, "bot_config.ini")
+def load_config_text(botname: str = None) -> str:
+    """Read the raw text content of config/bot_config.ini or config/bot_config.{botname}.ini."""
+    if botname:
+        filename = f"bot_config.{botname}.ini"
+    else:
+        filename = "bot_config.ini"
+    path = os.path.join(CONFIG_DIR, filename)
     if not os.path.exists(path):
         raise FileNotFoundError(f"Config file not found: {path}")
     with open(path, "r", encoding="utf-8") as f:

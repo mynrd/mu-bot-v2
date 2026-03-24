@@ -639,10 +639,11 @@ def parse_vip_map_from_id(map_id: str) -> int | None:
 def go_to_map(device: str, map_id: str):
     import inspect
     import os
+
     frame = inspect.stack()[1]
     caller = f"{os.path.basename(frame.filename)}:{frame.lineno}"
     state.console_log(f"[{caller}] - Navigating to map {map_id}...")
-    
+
     if map_id in ("7-01", "7-03", "7-04"):
         adb_helpers.teleport_to_swamp_of_abyss(device, state.BOT_CONFIG.IGN)
         state.MAP_INFO = state.get_map_info(map_id)
