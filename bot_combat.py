@@ -249,6 +249,12 @@ def engage_and_check_isvalid(device, ign, skipNames: List[str] = [], ignoreName=
         else:
 
             help_names = [name.lower() for name in state.BOT_CONFIG.HELP_NAMES]
+            for help_name in help_names:
+                check_help_name, found_text_help_name = adb_helpers.check_ign_exists(device, help_name, region=(880, 1, 1300, 60), img=img, debug=debug)
+                if check_help_name:
+                    console_log_with_ign(ign, f'Help name "{help_name}" found in region: "{found_text_help_name}". Helping "{ign}"....')
+                    return True
+
             if found_text and help_names and any(name in found_text.lower() for name in help_names):
                 console_log_with_ign(ign, f'Help name detected in text "{found_text}". Proceeding with kill action for "{ign}".')
                 adb_helpers.do_tap_attack(device, ign=ign, debug=debug)
