@@ -221,7 +221,7 @@ def engage_and_check_isvalid(device, ign, skipNames: List[str] = [], ignoreName=
                 adb_helpers.do_tap_attack(device, ign=ign, debug=debug)
                 return True
 
-            check, skipUsers, found_text = adb_helpers.check_ign_exists(device, ign, region=(880, 1, 1300, 60), skip_names=skipNames, img=img, debug=debug)
+            check, found_text = adb_helpers.check_ign_exists(device, ign, region=(880, 1, 1300, 60), img=img, debug=debug)
 
             state.CURRENT_FOUND_IGN_ON_BOSS = found_text
 
@@ -236,10 +236,10 @@ def engage_and_check_isvalid(device, ign, skipNames: List[str] = [], ignoreName=
                 adb_helpers.do_tap_attack(device, ign=ign, debug=debug)
                 return True
 
-        if skipUsers:
-            console_log_with_ign(ign, f"Skip users detected: {skipUsers}. Aborting kill action for '{ign}'.")
-            console_log_with_ign(ign, f'Blacklisted name found, aborting kill action for "{ign}".')
-            return False
+        # if skipUsers:
+        #     console_log_with_ign(ign, f"Skip users detected: {skipUsers}. Aborting kill action for '{ign}'.")
+        #     console_log_with_ign(ign, f'Blacklisted name found, aborting kill action for "{ign}".')
+        #     return False
 
         if check:
             console_log_with_ign(ign, f'"{ign}" found in region, proceeding with kill action (attempt {attempt}).')
@@ -247,6 +247,13 @@ def engage_and_check_isvalid(device, ign, skipNames: List[str] = [], ignoreName=
             adb_helpers.do_tap_attack(device, ign=ign, debug=debug)
             return True
         else:
+
+            help_names = [name.lower() for name in state.BOT_CONFIG.HELP_NAMES]
+            if found_text and help_names and any(name in found_text.lower() for name in help_names):
+                console_log_with_ign(ign, f'Help name detected in text "{found_text}". Proceeding with kill action for "{ign}".')
+                adb_helpers.do_tap_attack(device, ign=ign, debug=debug)
+                return True
+
             if attempt < max_retries:
                 console_log_with_ign(ign, f'"{ign}" not found in region (attempt {attempt}), retrying...')
                 CURRENT_TARGET = next((bi for bi in state.MAP_INFO.bosses if (bi.coordX, bi.coordY) == tuple(target_boss)), None)

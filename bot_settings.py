@@ -11,6 +11,7 @@ class BotSettings:
     PORT: str = ""
     IGN: str = ""
     SKIP_NAMES: list[str] = field(default_factory=list)
+    HELP_NAMES: list[str] = field(default_factory=list)
     IGNORE_NAME: bool = False
     USE_TELEPORT: bool = False
     MAP: str = ""
@@ -56,6 +57,7 @@ class BotSettings:
             PORT=config.get("PORT", prev.PORT if prev else ""),
             IGN=config.get("IGN", prev.IGN if prev else ""),
             SKIP_NAMES=[s.strip() for s in config.get("SKIP_NAMES", "").split(",") if s.strip()],
+            HELP_NAMES=[s.strip() for s in config.get("HELP_NAMES", "").split(",") if s.strip()],
             IGNORE_NAME=cls._to_bool(config.get("IGNORE_NAME", prev.IGNORE_NAME if prev else False)),
             USE_TELEPORT=cls._to_bool(config.get("USE_TELEPORT", prev.USE_TELEPORT if prev else False)),
             MAP=config.get("MAP", prev.MAP if prev else ""),

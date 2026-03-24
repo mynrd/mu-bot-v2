@@ -537,32 +537,26 @@ def get_alive_golden_boss_coordinates(device: str, coordinates: List[Tuple[float
     return alive_bosses
 
 
-def check_ign_exists(device, ign, skip_names: List[str] = [], region=(880, 1, 1300, 60), img=None, debug=False):
+def check_ign_exists(device, ign, region=(880, 1, 1300, 60), img=None, debug=False):
     from search_text_image import get_search_text
 
     if img is None:
         img = grab_raw_rgba(device, ign=ign, debug=debug)
+
     found_text = get_search_text("check_ign_exists", img, search=ign, region=region, ign=ign, debug=debug)
+
     if debug:
         console_log_with_ign(ign, f"[DEBUG] Detected IGN text: '{found_text}'")
 
-    skip_names_found = False
-    for name in skip_names:
-        if name.lower() in found_text.lower():
-            skip_names_found = True
-            if debug:
-                console_log_with_ign(ign, f"[DEBUG] Skip name '{name}' found in text.")
-            break
-
-    if search_text_fall_back.is_close_match(ign, found_text):
-        if debug:
-            console_log_with_ign(ign, f"[DEBUG] Close match found between '{ign}' and '{found_text}'.")
-        return True, skip_names_found, found_text
+    # if search_text_fall_back.is_close_match(ign, found_text):
+    #     if debug:
+    #         console_log_with_ign(ign, f"[DEBUG] Close match found between '{ign}' and '{found_text}'.")
+    #     return True, found_text
 
     if found_text is None:
         found_text = ""
 
-    return ign.lower() in found_text.lower(), skip_names_found, found_text
+    return ign.lower() in found_text.lower(), found_text
 
 
 def go_to_starting_position(device, ign, debug=False, nodelay=True):

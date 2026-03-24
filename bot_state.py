@@ -97,6 +97,7 @@ def load_bot_config():
         "PORT": BOT_CONFIG.PORT or "",
         "IGN": BOT_CONFIG.IGN or "",
         "SKIP_NAMES": "",
+        "HELP_NAMES": "",
         "IGNORE_NAME": "true" if BOT_CONFIG.IGNORE_NAME else "false",
         "USE_TELEPORT": "true" if BOT_CONFIG.USE_TELEPORT else "false",
         "MAP": BOT_CONFIG.MAP or "",

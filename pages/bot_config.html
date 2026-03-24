@@ -428,6 +428,7 @@ const FIELD_META = {
   RADIUS_SEARCH:      { label: 'Radius Search',      type: 'number' },
   THRESHOLD_DMG_RED:  { label: 'Threshold DMG Red (Buff)',  type: 'number' },
   SKIP_NAMES:    { label: 'Skip Names (comma-separated)', type: 'text' },
+  HELP_NAMES:    { label: 'Help Names (comma-separated)', type: 'text' },
   DEBUG:         { label: 'Debug',         type: 'bool' },
   RESTART_AFTER_MINUTES: { label: 'Restart After Minutes', type: 'number' },
   ON_WALK_MODE_GO_TO_STARTING_POINT: { label: 'Walk Mode: Go to Start', type: 'bool' },
@@ -474,7 +475,7 @@ const SECTIONS = [
   {
     title: 'Combat Settings',
     show: () => !toBool(form.AFK_MODE) && !toBool(form.IS_BUFFER),
-    fields: ['SKIP_NAMES', 'RADIUS_SEARCH', 'THRESHOLD_DMG_RED', 'RETRY_COUNT_READ_LIFE_FAILS'],
+    fields: ['SKIP_NAMES', 'HELP_NAMES', 'RADIUS_SEARCH', 'THRESHOLD_DMG_RED', 'RETRY_COUNT_READ_LIFE_FAILS'],
     layout: 'grid',
   },
   {
